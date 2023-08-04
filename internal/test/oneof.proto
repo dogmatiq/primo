@@ -1,0 +1,25 @@
+syntax = "proto3";
+package primo.test;
+
+option go_package = "github.com/dogmatiq/primo/internal/test";
+
+import "google/protobuf/timestamp.proto";
+
+message container {
+  oneof group_a {
+    value field_a1 = 1;
+    value field_a2 = 2;
+    string field_a3 = 3;
+  }
+
+  oneof group_b {
+    google.protobuf.Timestamp field_b1 = 4;
+    int32 field_b2 = 5;
+    enumeration field_b3 = 6;
+  }
+}
+
+message value {}
+enum enumeration {
+  ENUMERATION_UNKNOWN = 0;
+}
