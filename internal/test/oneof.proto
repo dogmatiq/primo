@@ -20,6 +20,7 @@ message container {
 }
 
 message value {}
+
 enum enumeration {
   ENUMERATION_UNKNOWN = 0;
 }
