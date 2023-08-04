@@ -11,7 +11,13 @@ type messageScope struct {
 }
 
 func (s *messageScope) Generate(code *jen.File) error {
-	messageName := camelCase(s.MessageDescriptor.GetName())
+	s.generateSetters(code)
+	s.generateDispatch(code)
+	return nil
+}
+
+func (s *messageScope) generateSetters(code *jen.File) {
+	messageName := exportedIdentifier(s.MessageDescriptor.GetName())
 	oneOfs := s.MessageDescriptor.GetOneofDecl()
 
 	for _, fd := range s.MessageDescriptor.GetField() {
@@ -19,8 +25,8 @@ func (s *messageScope) Generate(code *jen.File) error {
 			continue
 		}
 
-		fieldName := camelCase(oneOfs[fd.GetOneofIndex()].GetName())
-		optionName := camelCase(fd.GetName())
+		fieldName := exportedIdentifier(oneOfs[fd.GetOneofIndex()].GetName())
+		optionName := exportedIdentifier(fd.GetName())
 		methodName := "Set" + optionName
 		discriminatorName := messageName + "_" + optionName
 
@@ -58,8 +64,99 @@ func (s *messageScope) Generate(code *jen.File) error {
 					),
 			)
 	}
+}
 
-	return nil
+func (s *messageScope) generateDispatch(code *jen.File) {
+	messageName := exportedIdentifier(s.MessageDescriptor.GetName())
+
+	for i, od := range s.MessageDescriptor.GetOneofDecl() {
+		fieldName := exportedIdentifier(od.GetName())
+		methodName := "Dispatch" + fieldName
+
+		var options []*descriptorpb.FieldDescriptorProto
+		for _, fd := range s.MessageDescriptor.GetField() {
+			if fd.OneofIndex != nil && fd.GetOneofIndex() == int32(i) {
+				options = append(options, fd)
+			}
+		}
+
+		code.
+			Func().
+			Params(
+				jen.
+					Id("x").
+					Op("*").
+					Id(messageName),
+			).
+			Id(methodName).
+			ParamsFunc(
+				func(code *jen.Group) {
+					for _, fd := range options {
+						funcName := unexportedIdentifier(fd.GetName())
+
+						code.
+							Line().
+							Id(funcName).
+							Func().
+							Params(
+								s.fieldGoType(fd),
+							)
+					}
+
+					code.
+						Line().
+						Id("other").
+						Func().
+						Params()
+
+					code.Line()
+				},
+			).
+			Block(
+				jen.
+					Switch(
+						jen.
+							Id("v").
+							Op(":=").
+							Id("x").
+							Dot("Get" + fieldName).
+							Call().
+							Op(".").
+							Call(jen.Type()),
+					).
+					BlockFunc(
+						func(code *jen.Group) {
+							for _, fd := range options {
+								funcName := unexportedIdentifier(fd.GetName())
+								optionName := exportedIdentifier(fd.GetName())
+								discriminatorName := messageName + "_" + optionName
+
+								code.
+									Case(
+										jen.
+											Op("*").
+											Id(discriminatorName),
+									).
+									Block(
+										jen.
+											Id(funcName).
+											Call(
+												jen.
+													Id("v").
+													Dot(optionName),
+											),
+									)
+							}
+
+							code.
+								Default().
+								Block(
+									jen.Id("other").Call(),
+								)
+						},
+					),
+			)
+	}
 }
 
 func (s *messageScope) fieldGoType(fd *descriptorpb.FieldDescriptorProto) jen.Code {

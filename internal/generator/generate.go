@@ -51,7 +51,7 @@ func generate(
 				fd.GetPackage(),
 				md.GetName(),
 			)
-			types[q] = jen.Op("*").Qual(pkgPath, camelCase(md.GetName()))
+			types[q] = jen.Op("*").Qual(pkgPath, exportedIdentifier(md.GetName()))
 		}
 
 		for _, ed := range fd.GetEnumType() {
@@ -60,7 +60,7 @@ func generate(
 				fd.GetPackage(),
 				ed.GetName(),
 			)
-			types[q] = jen.Qual(pkgPath, camelCase(ed.GetName()))
+			types[q] = jen.Qual(pkgPath, exportedIdentifier(ed.GetName()))
 		}
 	}
 
