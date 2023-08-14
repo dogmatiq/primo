@@ -1,14 +1,14 @@
-package oneof_test
+package mutators_test
 
 import (
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test/oneof"
+	. "github.com/dogmatiq/primo/internal/test/mutators"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func TestOneOfSetters(t *testing.T) {
-	m := &Container{}
+func TestMutators_oneOf(t *testing.T) {
+	m := &Message{}
 
 	{
 		v := &Value{}

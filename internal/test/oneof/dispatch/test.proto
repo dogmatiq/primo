@@ -1,0 +1,14 @@
+syntax = "proto3";
+package primo.test;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/oneof/dispatch";
+
+message Message {
+  oneof group {
+    Value field_a1 = 1;
+    Value field_a2 = 2;
+    string field_a3 = 3;
+  }
+}
+
+message Value {}

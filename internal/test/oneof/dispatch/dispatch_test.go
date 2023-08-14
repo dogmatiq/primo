@@ -1,20 +1,20 @@
-package oneof_test
+package dispatch_test
 
 import (
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test/oneof"
+	. "github.com/dogmatiq/primo/internal/test/oneof/dispatch"
 )
 
 func TestOneOfDispatch(t *testing.T) {
-	m := &Container{}
+	m := &Message{}
 
 	want := &Value{}
 	m.SetFieldA2(want)
 
 	called := false
 
-	m.DispatchGroupA(
+	m.DispatchGroup(
 		func(*Value) {
 			t.Fatal("called the function for the FieldA1 case, expected FieldA2")
 		},

@@ -11,12 +11,12 @@ type messageScope struct {
 }
 
 func (s *messageScope) Generate(code *jen.File) error {
-	s.generateSetters(code)
+	s.generateMutators(code)
 	s.generateDispatch(code)
 	return nil
 }
 
-func (s *messageScope) generateSetters(code *jen.File) {
+func (s *messageScope) generateMutators(code *jen.File) {
 	messageName := exportedIdentifier(s.MessageDescriptor.GetName())
 	oneOfs := s.MessageDescriptor.GetOneofDecl()
 
