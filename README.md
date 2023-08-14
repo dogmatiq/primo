@@ -2,7 +2,7 @@
 
 # Primo
 
-A Protocol Buffers plugin for Go that enhances `oneof` fields and `enum` types.
+Opinionated Protocol Buffers enhancements for Go.
 
 [![Documentation](https://img.shields.io/badge/go.dev-documentation-007d9c?&style=for-the-badge)](https://pkg.go.dev/github.com/dogmatiq/primo)
 [![Latest Version](https://img.shields.io/github/tag/dogmatiq/primo.svg?&style=for-the-badge&label=semver)](https://github.com/dogmatiq/primo/releases)

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package primo.test;
 
-option go_package = "github.com/dogmatiq/primo/internal/test";
+option go_package = "github.com/dogmatiq/primo/internal/test/oneof";
 
 import "google/protobuf/timestamp.proto";
 

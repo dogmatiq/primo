@@ -1,11 +1,9 @@
-PROTO_GRPC_FILES := # Disable GRPC generation
-
 # Note, these files depend on the protoc-gen-go-primo binary from this repo to
 # be built.
 #
 # They have been added to .gitignore so that they are excluded from the
 # GO_SOURCE_FILES variable, as otherwise it would create a circular dependency.
-GO_TEST_REQ += internal/test/oneof_primo.pb.go
+GO_TEST_REQ += internal/test/oneof/oneof_primo.pb.go
 
 -include .makefiles/Makefile
 -include .makefiles/pkg/protobuf/v2/Makefile

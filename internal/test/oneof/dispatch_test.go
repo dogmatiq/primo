@@ -1,9 +1,9 @@
-package test_test
+package oneof_test
 
 import (
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test"
+	. "github.com/dogmatiq/primo/internal/test/oneof"
 )
 
 func TestOneOfDispatch(t *testing.T) {
