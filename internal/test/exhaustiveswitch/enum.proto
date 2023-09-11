@@ -1,0 +1,12 @@
+
+syntax = "proto3";
+package primo.test.exhaustiveswitch;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/exhaustiveswitch";
+
+enum Color {
+  UNKNOWN = 0;
+  RED = 1;
+  GREEN = 2;
+  BLUE = 3;
+}
