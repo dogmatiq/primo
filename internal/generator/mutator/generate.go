@@ -2,7 +2,7 @@ package mutator
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/primo/internal/generator/scope"
+	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 )
 
 // Generate generates mutator methods for each field in each message.
@@ -65,7 +65,7 @@ func generateForOneOfMember(code *jen.File, f *scope.Field) {
 			"%s sets the x.%s field to a [%s] value containing v",
 			methodName,
 			f.GoFieldName,
-			f.OneOfOption.DiscriminatorTypeName,
+			f.OneOfOption.Group.GoFieldName,
 		)
 
 	code.

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/primo/internal/generator/identifier"
-	"github.com/dogmatiq/primo/internal/generator/option"
+	"github.com/dogmatiq/primo/internal/generator/internal/identifier"
+	"github.com/dogmatiq/primo/internal/generator/internal/option"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
 )

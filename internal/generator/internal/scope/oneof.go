@@ -4,9 +4,10 @@ import "google.golang.org/protobuf/types/descriptorpb"
 
 // OneOfGroup describes a one-of group.
 type OneOfGroup struct {
-	Message    *Message
-	Descriptor *descriptorpb.OneofDescriptorProto
-	Options    []*OneOfOption
+	Message     *Message
+	Descriptor  *descriptorpb.OneofDescriptorProto
+	GoFieldName string
+	Options     []*OneOfOption
 }
 
 // OneOfOption describes a field that is part of a one-of.

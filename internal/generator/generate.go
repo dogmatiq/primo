@@ -6,9 +6,10 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/dogmatiq/primo/internal/generator/exhaustiveswitch"
+	"github.com/dogmatiq/primo/internal/generator/internal/option"
+	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 	"github.com/dogmatiq/primo/internal/generator/mutator"
-	"github.com/dogmatiq/primo/internal/generator/option"
-	"github.com/dogmatiq/primo/internal/generator/scope"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
@@ -33,6 +34,7 @@ func Generate(
 		ver,
 		req,
 		res,
+		exhaustiveswitch.Generate,
 		mutator.Generate,
 	); err != nil {
 		res.Error = proto.String(err.Error())

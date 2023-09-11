@@ -1,7 +1,7 @@
 package scope
 
 import (
-	"github.com/dogmatiq/primo/internal/generator/identifier"
+	"github.com/dogmatiq/primo/internal/generator/internal/identifier"
 	"google.golang.org/protobuf/types/descriptorpb"
 )
 

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package primo.test.exhaustiveswitch;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/exhaustiveswitch";
+
+message Record {
+  oneof Operation {
+    int32 increment = 1;
+    int32 decrement = 2;
+    string log = 3;
+  }
+}

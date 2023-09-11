@@ -1,7 +1,7 @@
 package scope
 
 import (
-	"github.com/dogmatiq/primo/internal/generator/identifier"
+	"github.com/dogmatiq/primo/internal/generator/internal/identifier"
 	"google.golang.org/protobuf/types/descriptorpb"
 )
 
@@ -28,8 +28,9 @@ func (m *Message) Fields() []*Field {
 			m.groups = append(
 				m.groups,
 				&OneOfGroup{
-					Message:    m,
-					Descriptor: d,
+					Message:     m,
+					Descriptor:  d,
+					GoFieldName: identifier.Exported(d.GetName()),
 				},
 			)
 		}
