@@ -1,0 +1,18 @@
+syntax = "proto3";
+package primo.test.mutators;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/mutators";
+
+message UserDefinedMessage {}
+enum UserDefinedEnum {
+  UNKNOWN = 0;
+  VALUE = 1;
+}
+
+message UserDefined {
+  message Nested {}
+
+  UserDefinedMessage message = 1;
+  UserDefinedEnum enum = 2;
+  Nested nested = 3;
+}

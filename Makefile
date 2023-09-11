@@ -3,8 +3,7 @@
 #
 # They have been added to .gitignore so that they are excluded from the
 # GO_SOURCE_FILES variable, as otherwise it would create a circular dependency.
-GO_TEST_REQ += internal/test/mutators/test_primo.pb.go
-GO_TEST_REQ += internal/test/oneof/dispatch/test_primo.pb.go
+GO_TEST_REQ += $(foreach f,$(PROTO_FILES:.proto=_primo.pb.go),$(if $(findstring /_,/$f),,$f))
 
 -include .makefiles/Makefile
 -include .makefiles/pkg/protobuf/v2/Makefile

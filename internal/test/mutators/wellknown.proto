@@ -1,0 +1,49 @@
+syntax = "proto3";
+package primo.test.mutators;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/mutators";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/api.proto";
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/source_context.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/type.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message WellKnown {
+  google.protobuf.Any any = 1;
+  google.protobuf.Api api = 2;
+  google.protobuf.BoolValue BoolValue = 3;
+  google.protobuf.BytesValue BytesValue = 4;
+  google.protobuf.DoubleValue DoubleValue = 5;
+  google.protobuf.Duration Duration = 6;
+  google.protobuf.Empty Empty = 7;
+  google.protobuf.Enum Enum = 8;
+  google.protobuf.EnumValue EnumValue = 9;
+  google.protobuf.Field Field = 10;
+  google.protobuf.Field.Cardinality FieldCardinality = 11;
+  google.protobuf.Field.Kind FieldKind = 12;
+  google.protobuf.FieldMask FieldMask = 13;
+  google.protobuf.FloatValue FloatValue = 14;
+  google.protobuf.Int32Value Int32Value = 15;
+  google.protobuf.Int64Value Int64Value = 16;
+  google.protobuf.ListValue ListValue = 17;
+  google.protobuf.Method Method = 18;
+  google.protobuf.Mixin Mixin = 19;
+  google.protobuf.NullValue NullValue = 20;
+  google.protobuf.Option Option = 21;
+  google.protobuf.SourceContext SourceContext = 22;
+  google.protobuf.StringValue StringValue = 23;
+  google.protobuf.Struct Struct = 24;
+  google.protobuf.Syntax Syntax = 25;
+  google.protobuf.Timestamp Timestamp = 26;
+  google.protobuf.Type Type = 27;
+  google.protobuf.UInt32Value UInt32Value = 28;
+  google.protobuf.UInt64Value UInt64Value = 29;
+  google.protobuf.Value Value = 30;
+}

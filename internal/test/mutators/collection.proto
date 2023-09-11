@@ -1,0 +1,9 @@
+syntax = "proto3";
+package primo.test.mutators;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/mutators";
+
+message Collection {
+  repeated int32 repeated = 1;
+  map<string, int32> map = 2;
+}

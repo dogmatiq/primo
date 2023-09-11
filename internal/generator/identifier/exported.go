@@ -1,23 +1,8 @@
-package generator
+package identifier
 
-import "strings"
-
-// unexportedIdentifier returns the camelCase version of a snake_case identifier.
-func unexportedIdentifier(s string) string {
-	i := strings.Index(s, "_")
-	if i == -1 {
-		return strings.ToLower(s)
-	}
-
-	head := strings.ToLower(s[:i])
-	tail := exportedIdentifier(s[i+1:])
-
-	return head + tail
-}
-
-// exportedIdentifier returns the CamelCase version of a snake_case identifier.
+// Exported returns the CamelCase version of a snake_case identifier.
 // It is intended to produce the same type names as protoc-gen-go.
-func exportedIdentifier(s string) string {
+func Exported(s string) string {
 	if s == "" {
 		return ""
 	}
