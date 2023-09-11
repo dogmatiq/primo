@@ -9,7 +9,7 @@ import (
 func Generate(code *jen.File, f *scope.File) error {
 	for _, m := range f.Messages() {
 		for _, g := range m.OneOfGroups() {
-			generateSwitchForOneOf(code, g)
+			generateForOneOf(code, g)
 		}
 	}
 
