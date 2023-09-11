@@ -17,6 +17,8 @@ import (
 )
 
 func TestWellKnown(t *testing.T) {
+	t.Parallel()
+
 	testMutator(
 		t,
 		(*WellKnown).SetAny,

@@ -7,6 +7,8 @@ import (
 )
 
 func TestUserDefined(t *testing.T) {
+	t.Parallel()
+
 	testMutator(
 		t,
 		(*UserDefined).SetMessage,

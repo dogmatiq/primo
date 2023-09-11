@@ -9,6 +9,8 @@ import (
 )
 
 func TestCollection(t *testing.T) {
+	t.Parallel()
+
 	testMutatorFunc(
 		t,
 		(*Collection).SetRepeated,

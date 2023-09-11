@@ -8,6 +8,8 @@ import (
 )
 
 func TestScalar(t *testing.T) {
+	t.Parallel()
+
 	testMutator(
 		t,
 		(*Scalar).SetInt32,

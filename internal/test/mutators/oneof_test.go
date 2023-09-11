@@ -7,6 +7,8 @@ import (
 )
 
 func TestOneOf(t *testing.T) {
+	t.Parallel()
+
 	testMutator(
 		t,
 		(*OneOf).SetFieldA,
