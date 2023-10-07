@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog], and this project adheres to
 - Generate a `NewXXX()` "constructor" function for each Protocol Buffers message
   type.
 
+### Changed
+
+- Mutator methods now construct and return a new message when called on a `nil`
+  message.
+
 ## [0.1.2] - 2023-10-07
 
 ### Changed

@@ -38,6 +38,20 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 				Id(f.Message.GoTypeName),
 		).
 		Block(
+			jen.If(
+				jen.
+					Id("x").
+					Op("==").
+					Nil(),
+			).
+				Block(
+					jen.
+						Id("x").
+						Op("=").
+						Op("&").
+						Id(f.Message.GoTypeName).
+						Values(),
+				),
 			jen.
 				Id("x").
 				Dot(f.GoFieldName).
