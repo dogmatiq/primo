@@ -1,0 +1,6 @@
+syntax = "proto3";
+package primo.test.constructor;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/constructor";
+
+message Message {}
