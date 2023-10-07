@@ -7,11 +7,16 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type message interface {
+	comparable
+	proto.Message
+}
+
 // testMutator calls a mutator method and verifies that the corresponding
 // accessor returns the value that was set.
-func testMutator[M proto.Message, T comparable](
+func testMutator[M message, T comparable](
 	t *testing.T,
-	mutator func(M, T),
+	mutator func(M, T) M,
 	accessor func(M) T,
 	want T,
 ) {
@@ -28,9 +33,9 @@ func testMutator[M proto.Message, T comparable](
 
 // testMutator calls a mutator method and verifies that the corresponding
 // accessor returns the value that was set.
-func testMutatorFunc[M proto.Message, T any](
+func testMutatorFunc[M message, T any](
 	t *testing.T,
-	mutator func(M, T),
+	mutator func(M, T) M,
 	accessor func(M) T,
 	want T,
 	eq func(T, T) bool,
@@ -46,7 +51,14 @@ func testMutatorFunc[M proto.Message, T any](
 		reflect.TypeOf(m).Elem(),
 	).Interface().(M)
 
-	mutator(m, want)
+	p := mutator(m, want)
+	if p != m {
+		t.Fatalf(
+			"mutator did not return the message: got: %v, want: %v",
+			p,
+			m,
+		)
+	}
 
 	got := accessor(m)
 

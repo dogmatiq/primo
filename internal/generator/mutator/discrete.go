@@ -12,7 +12,7 @@ func generateForDiscreteField(code *jen.File, f *scope.Field) {
 
 	code.
 		Commentf(
-			"%s sets the x.%s field to v.",
+			"%s sets the x.%s field to v, then returns x.",
 			methodName,
 			f.GoFieldName,
 		)
@@ -31,11 +31,19 @@ func generateForDiscreteField(code *jen.File, f *scope.Field) {
 				Id("v").
 				Add(f.GoType()),
 		).
+		Params(
+			jen.
+				Op("*").
+				Id(f.Message.GoTypeName),
+		).
 		Block(
 			jen.
 				Id("x").
 				Dot(f.GoFieldName).
 				Op("=").
 				Id("v"),
+			jen.
+				Return().
+				Id("x"),
 		)
 }
