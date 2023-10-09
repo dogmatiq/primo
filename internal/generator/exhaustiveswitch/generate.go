@@ -13,5 +13,9 @@ func Generate(code *jen.File, f *scope.File) error {
 		}
 	}
 
+	for _, e := range f.Enums() {
+		generateForEnum(code, e)
+	}
+
 	return nil
 }

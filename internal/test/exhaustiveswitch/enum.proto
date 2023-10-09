@@ -1,0 +1,14 @@
+syntax = "proto3";
+package primo.test.exhaustiveswitch;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/exhaustiveswitch";
+
+enum Direction {
+  option allow_alias = true;
+
+  UNKNOWN = 0;
+  LEFT = -1;
+  RIGHT = 1;
+  SINISTER = -1;
+  DEXTER = 1;
+}

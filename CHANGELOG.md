@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog], and this project adheres to
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## Unreleased
+
+### Added
+
+- Generate a `Switch_XXX()` function for each Protocol Buffers enumeration type.
+
 ## [0.1.3] - 2023-10-07
 
 ### Added
