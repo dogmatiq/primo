@@ -1,7 +1,8 @@
 module github.com/dogmatiq/primo
 
-go 1.20
+go 1.21
 
-require google.golang.org/protobuf v1.31.0
-
-require github.com/dave/jennifer v1.7.0
+require (
+	github.com/dave/jennifer v1.7.0
+	google.golang.org/protobuf v1.31.0
+)
