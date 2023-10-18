@@ -1,4 +1,4 @@
-package mutators_test
+package mutator_test
 
 import (
 	reflect "reflect"

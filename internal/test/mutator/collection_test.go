@@ -1,11 +1,11 @@
-package mutators_test
+package mutator_test
 
 import (
 	"maps"
 	"slices"
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test/mutators"
+	. "github.com/dogmatiq/primo/internal/test/mutator"
 )
 
 func TestCollection(t *testing.T) {

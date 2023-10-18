@@ -1,9 +1,9 @@
-package mutators_test
+package mutator_test
 
 import (
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test/mutators"
+	. "github.com/dogmatiq/primo/internal/test/mutator"
 )
 
 func TestOneOf(t *testing.T) {

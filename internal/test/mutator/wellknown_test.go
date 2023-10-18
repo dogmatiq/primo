@@ -1,9 +1,9 @@
-package mutators_test
+package mutator_test
 
 import (
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test/mutators"
+	. "github.com/dogmatiq/primo/internal/test/mutator"
 	anypb "google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/apipb"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"

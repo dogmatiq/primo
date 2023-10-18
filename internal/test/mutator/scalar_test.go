@@ -1,10 +1,10 @@
-package mutators_test
+package mutator_test
 
 import (
 	"bytes"
 	"testing"
 
-	. "github.com/dogmatiq/primo/internal/test/mutators"
+	. "github.com/dogmatiq/primo/internal/test/mutator"
 )
 
 func TestScalar(t *testing.T) {
