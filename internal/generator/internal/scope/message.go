@@ -49,14 +49,19 @@ func (m *Message) Fields() []*Field {
 			if d.OneofIndex != nil {
 				group := m.groups[d.GetOneofIndex()]
 
-				n := f.GoFieldName
+				fieldName := f.GoFieldName
 				f.GoFieldName = identifier.Exported(group.Descriptor.GetName())
+
+				typeName := m.GoTypeName + "_" + fieldName
+				if m.File.Request.hasGoType(m.File.GoPackagePath, typeName) {
+					typeName += "_"
+				}
 
 				f.OneOfOption = &OneOfOption{
 					Group:                  group,
 					Field:                  f,
-					DiscriminatorTypeName:  m.GoTypeName + "_" + n,
-					DiscriminatorFieldName: n,
+					DiscriminatorTypeName:  typeName,
+					DiscriminatorFieldName: fieldName,
 				}
 
 				group.Options = append(group.Options, f.OneOfOption)

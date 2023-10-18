@@ -8,5 +8,8 @@ message Record {
     int32 increment = 1;
     int32 decrement = 2;
     string log = 3;
+    NamingCollision naming_collision = 4;
   }
+
+  message NamingCollision {}
 }

@@ -17,8 +17,9 @@ type Request struct {
 	PluginRequest    *pluginpb.CodeGeneratorRequest
 	PluginParameters Parameters
 
-	types map[string]jen.Code
-	maps  map[string]*descriptorpb.DescriptorProto
+	pbTypes map[string]jen.Code                      // fully-qualified protocol buffers type name -> Go type expression
+	pbMaps  map[string]*descriptorpb.DescriptorProto // fully-qualified protocol buffers type name -> map descriptor
+	goTypes map[string]map[string]struct{}           // go package path -> go type name -> struct{}
 }
 
 // Parameters encapsulates the options passed to the generator via the
@@ -38,17 +39,26 @@ type Parameters struct {
 func (r *Request) typeExpr(n string) jen.Code {
 	populateTypes(r)
 
-	if expr, ok := r.types[n]; ok {
+	if expr, ok := r.pbTypes[n]; ok {
 		return expr
 	}
 
 	panic("unknown type: " + n)
 }
 
+// hasGoType returns true if there is a generated go type in the given package
+// with the given name.
+func (r *Request) hasGoType(pkgPath, name string) bool {
+	populateTypes(r)
+
+	_, ok := r.goTypes[pkgPath][name]
+	return ok
+}
+
 func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto) jen.Code {
 	populateTypes(r)
 
-	if md, ok := r.maps[fd.GetTypeName()]; ok {
+	if md, ok := r.pbMaps[fd.GetTypeName()]; ok {
 		var key, value jen.Code
 
 		for _, mfd := range md.GetField() {
@@ -106,8 +116,13 @@ func typeExprForFieldType(r *Request, fd *descriptorpb.FieldDescriptorProto) jen
 }
 
 func populateTypes(r *Request) {
-	r.types = map[string]jen.Code{}
-	r.maps = map[string]*descriptorpb.DescriptorProto{}
+	if r.pbTypes != nil {
+		return
+	}
+
+	r.pbTypes = map[string]jen.Code{}
+	r.pbMaps = map[string]*descriptorpb.DescriptorProto{}
+	r.goTypes = map[string]map[string]struct{}{}
 
 	for _, fd := range r.PluginRequest.GetProtoFile() {
 		goPackage, _, err := option.GoPackage(fd)
@@ -147,19 +162,14 @@ func buildMessageExpression(
 	md *descriptorpb.DescriptorProto,
 ) {
 	parts := append(nesting, md.GetName())
-	name := "." + protoPackage + "." + strings.Join(parts, ".")
+	protoName := "." + protoPackage + "." + strings.Join(parts, ".")
 
 	if md.GetOptions().GetMapEntry() {
-		r.maps[name] = md
+		r.pbMaps[protoName] = md
 	} else {
-		r.types[name] = jen.
-			Op("*").
-			Qual(
-				goPackage,
-				identifier.Exported(
-					strings.Join(parts, "_"),
-				),
-			)
+		goType := identifier.Exported(strings.Join(parts, "_"))
+		r.pbTypes[protoName] = jen.Op("*").Qual(goPackage, goType)
+		registerGoType(r, goPackage, goType)
 	}
 
 	for _, nd := range md.GetNestedType() {
@@ -191,13 +201,18 @@ func buildEnumExpression(
 	ed *descriptorpb.EnumDescriptorProto,
 ) {
 	parts := append(nesting, ed.GetName())
-	name := "." + protoPackage + "." + strings.Join(parts, ".")
+	pbName := "." + protoPackage + "." + strings.Join(parts, ".")
+	goType := identifier.Exported(strings.Join(parts, "_"))
 
-	r.types[name] = jen.
-		Qual(
-			goPackage,
-			identifier.Exported(
-				strings.Join(parts, "_"),
-			),
-		)
+	r.pbTypes[pbName] = jen.Qual(goPackage, goType)
+	registerGoType(r, goPackage, goType)
+}
+
+func registerGoType(r *Request, pkgPath, name string) {
+	types, ok := r.goTypes[pkgPath]
+	if !ok {
+		types = map[string]struct{}{}
+		r.goTypes[pkgPath] = types
+	}
+	types[name] = struct{}{}
 }

@@ -26,6 +26,7 @@ func TestOneOf(t *testing.T) {
 				func(v int32) int32 { panic("unexpected increment operation") },
 				func(v int32) int32 { return v - 1 },
 				func(m string) int32 { panic("unexpected log operation") },
+				func(*Record_NamingCollision) int32 { panic("unexpected NamingCollision operation") },
 			)
 
 			if got != want {
@@ -56,9 +57,10 @@ func TestOneOf(t *testing.T) {
 
 			Switch_Record_Operation(
 				rec,
-				func(v int32) error { panic("unexpected increment operation") },
-				func(v int32) error { panic("unexpected decrement operation") },
-				func(m string) error { panic("unexpected log operation") },
+				func(int32) error { panic("unexpected increment operation") },
+				func(int32) error { panic("unexpected decrement operation") },
+				func(string) error { panic("unexpected log operation") },
+				func(*Record_NamingCollision) error { panic("unexpected log operation") },
 			)
 		},
 	)

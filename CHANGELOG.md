@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog], and this project adheres to
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [0.1.5] - 2023-10-18
+
+### Fixed
+
+- Fix incorrect switch case generation when the name of a "one-of discriminator"
+  type conflicts with another Go generated type.
+
 ## [0.1.4] - 2023-10-10
 
 ### Added
@@ -53,6 +60,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.1.2]: https://github.com/dogmatiq/primo/releases/tag/v0.1.2
 [0.1.3]: https://github.com/dogmatiq/primo/releases/tag/v0.1.3
 [0.1.4]: https://github.com/dogmatiq/primo/releases/tag/v0.1.4
+[0.1.5]: https://github.com/dogmatiq/primo/releases/tag/v0.1.5
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD
