@@ -85,14 +85,12 @@ func generateForOneOf(code *jen.File, g *scope.OneOfGroup) {
 										Op("*").
 										Id(o.DiscriminatorTypeName),
 								).
-								Return(
+								Return().
+								Id(paramPrefix + o.DiscriminatorFieldName).
+								Call(
 									jen.
-										Id(paramPrefix + o.DiscriminatorFieldName).
-										Call(
-											jen.
-												Id("v").
-												Dot(o.DiscriminatorFieldName),
-										),
+										Id("v").
+										Dot(o.DiscriminatorFieldName),
 								)
 						}
 

@@ -114,14 +114,12 @@ func generateForEnum(code *jen.File, e *scope.Enum) {
 							}
 							code.
 								Case(jen.Id(m.GoConstantName)).
-								Return(
+								Return().
+								Id(paramPrefix + m.Descriptor.GetName()).
+								Call(
 									jen.
-										Id(paramPrefix + m.Descriptor.GetName()).
-										Call(
-											jen.
-												Id(m.GoConstantName + discriminatorSuffix).
-												Values(),
-										),
+										Id(m.GoConstantName + discriminatorSuffix).
+										Values(),
 								)
 						}
 

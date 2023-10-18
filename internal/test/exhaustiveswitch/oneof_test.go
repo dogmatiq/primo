@@ -60,7 +60,7 @@ func TestOneOf(t *testing.T) {
 				func(int32) error { panic("unexpected increment operation") },
 				func(int32) error { panic("unexpected decrement operation") },
 				func(string) error { panic("unexpected log operation") },
-				func(*Record_NamingCollision) error { panic("unexpected log operation") },
+				func(*Record_NamingCollision) error { panic("unexpected NamingCollision operation") },
 			)
 		},
 	)

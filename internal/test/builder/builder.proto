@@ -1,0 +1,14 @@
+syntax = "proto3";
+package primo.test.builder;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/builder";
+
+message Message {
+  int32 field_a = 1;
+  string field_b = 2;
+
+  oneof group {
+    int32 field_c = 3;
+    int32 field_d = 4;
+  }
+}
