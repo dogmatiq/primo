@@ -7,67 +7,155 @@ import (
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 )
 
-// generateForEnum generates a switch function for the members of an enum type.
 func generateForEnum(code *jen.File, e *scope.Enum) {
-	const (
-		paramPrefix         = "case"
-		discriminatorSuffix = "_Case"
-	)
+	generateEnumDiscriminators(code, e)
+	generateEnumSwitch(code, e)
+	generateEnumMap(code, e)
+}
 
-	name := "Switch_" + e.GoTypeName
+func enumCaseFuncName(m *scope.EnumMember) string {
+	return "case" + m.Descriptor.GetName()
+}
 
+func enumDiscriminatorTypeName(m *scope.EnumMember) string {
+	return m.GoConstantName + "_Case"
+}
+func generateEnumDiscriminators(code *jen.File, e *scope.Enum) {
 	code.
 		Type().
 		DefsFunc(
 			func(code *jen.Group) {
 				for _, m := range e.Members() {
-					caseName := m.GoConstantName + discriminatorSuffix
+					name := enumDiscriminatorTypeName(m)
 
 					code.
 						Commentf(
-							"%s is a type that identifies a function that is",
-							caseName,
+							"%s is a type that statically associates a function",
+							name,
 						)
 					code.
 						Commentf(
-							"invoked by [%s] when the [%s] is [%s].",
-							name,
-							e.GoTypeName,
+							"with a [%s] value.",
 							m.GoConstantName,
 						)
 
 					if m.AliasFor == nil {
 						code.
-							Id(caseName).
+							Id(name).
 							Struct()
 					} else {
 						code.
-							Id(caseName).
+							Id(name).
 							Op("=").
-							Id(m.AliasFor.GoConstantName + discriminatorSuffix)
+							Id(enumDiscriminatorTypeName(m.AliasFor))
 					}
 				}
 			},
 		)
+}
+
+func generateEnumSwitch(code *jen.File, e *scope.Enum) {
+	funcName := "Switch_" + e.GoTypeName
 
 	code.
 		Commentf(
-			"%s accepts a set of functions that correspond to the",
-			name,
-		)
-	code.
-		Commentf(
-			"members of the [%s] enumeration.",
-			e.GoTypeName,
+			"%s dispatches to a function based on the value of v.",
+			funcName,
 		)
 	code.Comment("")
-	code.Comment("It invokes the function that corresponds to v, and returns that function's")
-	code.Comment("return value. If no return value is required, use a return type of [error]")
-	code.Comment("and always return nil.")
+	code.Comment("It invokes the function that corresponds to v. It panics if v is not a")
+	code.
+		Commentf(
+			"recognized [%s] value.",
+			e.GoTypeName,
+		)
 
 	code.
 		Func().
-		Id(name).
+		Id(funcName).
+		ParamsFunc(
+			func(code *jen.Group) {
+				code.
+					Line().
+					Id("v").
+					Id(e.GoTypeName)
+
+				for _, m := range e.Members() {
+					if m.AliasFor == nil {
+						code.
+							Line().
+							Id(enumCaseFuncName(m)).
+							Func().
+							Params(
+								jen.Id(enumDiscriminatorTypeName(m)),
+							)
+					}
+				}
+
+				code.Line()
+			},
+		).
+		Block(
+			jen.
+				Switch(
+					jen.Id("v"),
+				).
+				BlockFunc(
+					func(code *jen.Group) {
+						for _, m := range e.Members() {
+							if m.AliasFor == nil {
+								code.
+									Case(jen.Id(m.GoConstantName)).
+									Id(enumCaseFuncName(m)).
+									Call(
+										jen.
+											Id(enumDiscriminatorTypeName(m)).
+											Values(),
+									)
+							}
+						}
+
+						code.
+							Default().
+							Panic(
+								jen.
+									Qual("fmt", "Sprintf").
+									Call(
+										jen.Lit(
+											fmt.Sprintf(
+												"%s: %%d is not a valid %s",
+												funcName,
+												e.GoTypeName,
+											),
+										),
+										jen.Id("v"),
+									),
+							)
+					},
+				),
+		)
+}
+
+func generateEnumMap(code *jen.File, e *scope.Enum) {
+	funcName := "Map_" + e.GoTypeName
+
+	code.
+		Commentf(
+			"%s maps a member of the [%s] enumeration to a",
+			funcName,
+			e.GoTypeName,
+		)
+	code.Comment("value of type T.")
+	code.Comment("")
+	code.Comment("It invokes the function that corresponds to v, and returns that function's")
+	code.Commentf(
+		"result. It panics if v is not a recognized [%s] value.",
+		e.GoTypeName,
+	)
+
+	code.
+		Func().
+		Id(funcName).
 		Types(
 			jen.Id("T").Any(),
 		).
@@ -79,20 +167,18 @@ func generateForEnum(code *jen.File, e *scope.Enum) {
 					Id(e.GoTypeName)
 
 				for _, m := range e.Members() {
-					if m.AliasFor != nil {
-						continue
+					if m.AliasFor == nil {
+						code.
+							Line().
+							Id(enumCaseFuncName(m)).
+							Func().
+							Params(
+								jen.Id(enumDiscriminatorTypeName(m)),
+							).
+							Params(
+								jen.Id("T"),
+							)
 					}
-
-					code.
-						Line().
-						Id(paramPrefix + m.Descriptor.GetName()).
-						Func().
-						Params(
-							jen.Id(m.GoConstantName + discriminatorSuffix),
-						).
-						Params(
-							jen.Id("T"),
-						)
 				}
 
 				code.Line()
@@ -109,18 +195,17 @@ func generateForEnum(code *jen.File, e *scope.Enum) {
 				BlockFunc(
 					func(code *jen.Group) {
 						for _, m := range e.Members() {
-							if m.AliasFor != nil {
-								continue
+							if m.AliasFor == nil {
+								code.
+									Case(jen.Id(m.GoConstantName)).
+									Return().
+									Id(enumCaseFuncName(m)).
+									Call(
+										jen.
+											Id(enumDiscriminatorTypeName(m)).
+											Values(),
+									)
 							}
-							code.
-								Case(jen.Id(m.GoConstantName)).
-								Return().
-								Id(paramPrefix + m.Descriptor.GetName()).
-								Call(
-									jen.
-										Id(m.GoConstantName + discriminatorSuffix).
-										Values(),
-								)
 						}
 
 						code.
@@ -132,7 +217,7 @@ func generateForEnum(code *jen.File, e *scope.Enum) {
 										jen.Lit(
 											fmt.Sprintf(
 												"%s: %%d is not a valid %s",
-												name,
+												funcName,
 												e.GoTypeName,
 											),
 										),

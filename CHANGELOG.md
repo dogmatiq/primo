@@ -16,9 +16,12 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 - Generate an `XXXBuilder` type for each Protocol Buffers message type, which
   constructs messages from a configurable prototype message.
+- Generate a `Map_XXX()` function for each Protocol Buffers enumeration and
+  one-of type.
 
 ### Removed
 
+- **[BC]** Removed the return value from generated `Switch_XXX()` functions, use `Map_XXX()` instead.
 - **[BC]** Removed generated `NewXXX()` functions, use `NewXXXBuilder()` instead.
 - **[BC]** Removed the return value from generated mutator methods.
 

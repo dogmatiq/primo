@@ -5,7 +5,8 @@ import (
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 )
 
-// Generate generates mutator methods for each field in each message.
+// Generate generates switch and map functions for each enum type and one-of
+// group.
 func Generate(code *jen.File, f *scope.File) error {
 	for _, m := range f.Messages() {
 		for _, g := range m.OneOfGroups() {
