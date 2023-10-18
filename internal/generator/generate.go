@@ -7,7 +7,6 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/primo/internal/generator/builder"
-	"github.com/dogmatiq/primo/internal/generator/constructor"
 	"github.com/dogmatiq/primo/internal/generator/exhaustiveswitch"
 	"github.com/dogmatiq/primo/internal/generator/internal/option"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
@@ -37,7 +36,6 @@ func Generate(
 		req,
 		res,
 		builder.Generate,
-		constructor.Generate,
 		exhaustiveswitch.Generate,
 		mutator.Generate,
 	); err != nil {

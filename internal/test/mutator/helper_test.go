@@ -16,7 +16,7 @@ type message interface {
 // accessor returns the value that was set.
 func testMutator[M message, T comparable](
 	t *testing.T,
-	mutator func(M, T) M,
+	mutator func(M, T),
 	accessor func(M) T,
 	want T,
 ) {
@@ -35,8 +35,8 @@ func testMutator[M message, T comparable](
 // accessor returns the value that was set.
 func testMutatorFunc[M message, T any](
 	t *testing.T,
-	mutator func(M, T) M,
-	accessor func(M) T,
+	mutate func(M, T),
+	access func(M) T,
 	want T,
 	eq func(T, T) bool,
 ) {
@@ -46,32 +46,14 @@ func testMutatorFunc[M message, T any](
 		panic("cannot test mutator with zero value")
 	}
 
-	var nil_ M
+	var m M
+	m = reflect.New(
+		reflect.TypeOf(m).Elem(),
+	).Interface().(M)
 
-	t.Log("calling mutator on a nil message")
-	m := mutator(nil_, want)
-	if m == nil_ {
-		t.Fatal("mutator returned a nil message")
-	}
+	mutate(m, want)
 
-	t.Log("checking that the mutator set the field")
-	if got := accessor(m); !eq(got, want) {
-		t.Fatalf(
-			"mutator did not set the field: got: %v, want: %v",
-			got,
-			want,
-		)
-	}
-
-	t.Log("calling mutator on a non-nil message")
-	var zero T
-	want = zero
-	r := mutator(m, want)
-	if r != m {
-		t.Fatal("mutator did not return the mutated message")
-	}
-
-	if got := accessor(m); !eq(got, want) {
+	if got := access(m); !eq(got, want) {
 		t.Fatalf(
 			"mutator did not set the field: got: %v, want: %v",
 			got,

@@ -33,26 +33,8 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 				Id("v").
 				Add(f.GoType()),
 		).
-		Params(
-			jen.
-				Op("*").
-				Id(f.Message.GoTypeName),
-		).
+		Params().
 		Block(
-			jen.If(
-				jen.
-					Id("x").
-					Op("==").
-					Nil(),
-			).
-				Block(
-					jen.
-						Id("x").
-						Op("=").
-						Op("&").
-						Id(f.Message.GoTypeName).
-						Values(),
-				),
 			jen.
 				Id("x").
 				Dot(f.GoFieldName).
@@ -62,8 +44,5 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 				Values(
 					jen.Id(f.OneOfOption.DiscriminatorFieldName).Op(":").Id("v"),
 				),
-			jen.
-				Return().
-				Id("x"),
 		)
 }

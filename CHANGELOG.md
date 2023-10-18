@@ -14,7 +14,13 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ### Added
 
-- Generate a "message builder" for each Protocol Buffers message type.
+- Generate an `XXXBuilder` type for each Protocol Buffers message type, which
+  constructs messages from a configurable prototype message.
+
+### Removed
+
+- **[BC]** Removed generated `NewXXX()` functions, use `NewXXXBuilder()` instead.
+- **[BC]** Removed the return value from generated mutator methods.
 
 ## [0.1.5] - 2023-10-18
 
