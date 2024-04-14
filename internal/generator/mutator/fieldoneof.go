@@ -12,12 +12,11 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 
 	code.
 		Commentf(
-			"%s sets the x.%s field to a [%s] value containing v,",
+			"%s sets the x.%s field to a [%s] value containing v.",
 			methodName,
 			f.OneOfOption.Group.GoFieldName,
 			f.OneOfOption.DiscriminatorTypeName,
 		)
-	code.Comment("then returns x.")
 
 	code.
 		Func().
@@ -33,7 +32,6 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 				Id("v").
 				Add(f.GoType()),
 		).
-		Params().
 		Block(
 			jen.
 				Id("x").
