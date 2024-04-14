@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The minimum supported version of Go is now 1.22.
+
 ### Fixed
 
 - Fixed incorrect documentation on generated mutator methods.

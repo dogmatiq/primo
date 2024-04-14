@@ -16,16 +16,16 @@ type message interface {
 // accessor returns the value that was set.
 func testMutator[M message, T comparable](
 	t *testing.T,
-	mutator func(M, T),
-	accessor func(M) T,
+	mutate func(M, T),
+	access func(M) T,
 	want T,
 ) {
 	t.Helper()
 
 	testMutatorFunc(
 		t,
-		mutator,
-		accessor,
+		mutate,
+		access,
 		want,
 		func(a, b T) bool { return a == b },
 	)
@@ -46,9 +46,8 @@ func testMutatorFunc[M message, T any](
 		panic("cannot test mutator with zero value")
 	}
 
-	var m M
-	m = reflect.New(
-		reflect.TypeOf(m).Elem(),
+	m := reflect.New(
+		reflect.TypeFor[M]().Elem(),
 	).Interface().(M)
 
 	mutate(m, want)
