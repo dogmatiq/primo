@@ -13,6 +13,7 @@ type OneOfGroup struct {
 // OneOfOption describes a field that is part of a one-of.
 type OneOfOption struct {
 	Group                  *OneOfGroup
+	Position               int
 	Field                  *Field
 	DiscriminatorTypeName  string
 	DiscriminatorFieldName string

@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Generate an `ImmutableXXX` interface for each Protocol Buffers message type,
+  which contains only the accessor methods.
+- Generate a `MutableXXX` interface for each Protocol Buffers message type,
+  which contains the accessor and mutator methods.
+
 ### Changed
 
 - The minimum supported version of Go is now 1.22.

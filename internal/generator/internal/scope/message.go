@@ -60,6 +60,7 @@ func (m *Message) Fields() []*Field {
 				f.OneOfOption = &OneOfOption{
 					Group:                  group,
 					Field:                  f,
+					Position:               len(group.Options),
 					DiscriminatorTypeName:  typeName,
 					DiscriminatorFieldName: fieldName,
 				}

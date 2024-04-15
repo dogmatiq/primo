@@ -1,0 +1,12 @@
+syntax = "proto3";
+package primo.test.immutable;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/immutable";
+
+message OneOf {
+  oneof group {
+    int32 field_a = 1; // note: two fields of the same type
+    int32 field_b = 2;
+    string field_c = 3;
+  }
+}

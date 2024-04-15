@@ -55,6 +55,12 @@ func (r *Request) hasGoType(pkgPath, name string) bool {
 	return ok
 }
 
+func (r *Request) isMap(fd *descriptorpb.FieldDescriptorProto) bool {
+	populateTypes(r)
+	_, ok := r.pbMaps[fd.GetTypeName()]
+	return ok
+}
+
 func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto) jen.Code {
 	populateTypes(r)
 

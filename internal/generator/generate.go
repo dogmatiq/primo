@@ -8,6 +8,7 @@ import (
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/primo/internal/generator/builder"
 	"github.com/dogmatiq/primo/internal/generator/exhaustiveswitch"
+	"github.com/dogmatiq/primo/internal/generator/immutable"
 	"github.com/dogmatiq/primo/internal/generator/internal/option"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 	"github.com/dogmatiq/primo/internal/generator/mutator"
@@ -37,6 +38,7 @@ func Generate(
 		res,
 		builder.Generate,
 		exhaustiveswitch.Generate,
+		immutable.Generate,
 		mutator.Generate,
 	); err != nil {
 		res.Error = proto.String(err.Error())
