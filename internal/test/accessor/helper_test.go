@@ -8,7 +8,7 @@ import (
 )
 
 // testAccessor calls a mutator method to set the value and verifies that the
-// corresponding accessor returns the expected value and boolean ok value.
+// corresponding accessor returns the expected value and an ok value of true.
 func testAccessor[M proto.Message, T comparable](
 	t *testing.T,
 	mutator func(M, T),
@@ -27,7 +27,7 @@ func testAccessor[M proto.Message, T comparable](
 }
 
 // testAccessorFunc calls a mutator method to set the value and verifies that the
-// corresponding accessor returns the expected value and boolean ok value.
+// corresponding accessor returns the expected value and an ok value of true.
 func testAccessorFunc[M proto.Message, T any](
 	t *testing.T,
 	mutate func(M, T),
@@ -46,9 +46,7 @@ func testAccessorFunc[M proto.Message, T any](
 
 	got, gotOK := access(m)
 	if !gotOK {
-		t.Fatalf(
-			"accessor did not return expected ok as true",
-		)
+		t.Fatal("accessor did not return with ok set to true")
 	}
 
 	if !eq(got, want) {

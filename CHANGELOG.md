@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog], and this project adheres to
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [0.2.1] - 2024-04-23
+
+### Added
+
+- Generate `TryGetXXX()` methods for each option within one-of groups.
+
 ## [0.2.0] - 2023-10-19
 
 ### Added
@@ -77,6 +83,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.1.4]: https://github.com/dogmatiq/primo/releases/tag/v0.1.4
 [0.1.5]: https://github.com/dogmatiq/primo/releases/tag/v0.1.5
 [0.2.0]: https://github.com/dogmatiq/primo/releases/tag/v0.2.0
+[0.2.1]: https://github.com/dogmatiq/primo/releases/tag/v0.2.1
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD

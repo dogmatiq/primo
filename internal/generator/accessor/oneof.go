@@ -7,22 +7,26 @@ import (
 
 func generateForOneOf(code *jen.File, g *scope.OneOfGroup) {
 	for _, o := range g.Options {
-		oneOfAccessorTryFunc(code, o)
+		generateForOneOfOption(code, o)
 	}
 }
 
-func oneOfAccessorTryFunc(code *jen.File, o *scope.OneOfOption) {
-	methodName := "Try" + o.DiscriminatorFieldName
+func generateForOneOfOption(code *jen.File, o *scope.OneOfOption) {
+	methodName := "TryGet" + o.DiscriminatorFieldName
 
 	code.
 		Commentf(
-			"%s returns the value of [%s] in one-of field x.%s.",
+			"%s returns x.%s.%s if x.%s is a [%s].",
 			methodName,
+			o.Group.GoFieldName,
 			o.DiscriminatorFieldName,
 			o.Group.GoFieldName,
+			o.DiscriminatorTypeName,
 		)
-	code.Comment("")
-	code.Comment("ok returns false if the value of this type is not set.")
+	code.
+		Commentf(
+			"Otherwise, ok is false v is the zero-value.",
+		)
 
 	code.
 		Func().
