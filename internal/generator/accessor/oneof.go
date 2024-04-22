@@ -25,7 +25,7 @@ func generateForOneOfOption(code *jen.File, o *scope.OneOfOption) {
 		)
 	code.
 		Commentf(
-			"Otherwise, ok is false v is the zero-value.",
+			"Otherwise, ok is false and v is the zero-value.",
 		)
 
 	code.
