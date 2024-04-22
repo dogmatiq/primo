@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/dogmatiq/primo/internal/generator/accessor"
 	"github.com/dogmatiq/primo/internal/generator/builder"
 	"github.com/dogmatiq/primo/internal/generator/exhaustiveswitch"
 	"github.com/dogmatiq/primo/internal/generator/internal/option"
@@ -38,6 +39,7 @@ func Generate(
 		builder.Generate,
 		exhaustiveswitch.Generate,
 		mutator.Generate,
+		accessor.Generate,
 	); err != nil {
 		res.Error = proto.String(err.Error())
 	}
