@@ -19,13 +19,21 @@ func TestBuilder(t *testing.T) {
 	builder := NewMessageBuilder().
 		From(prototype).
 		WithFieldA(123).
-		WithFieldC(456)
+		WithFieldC(456).
+		WithNested(
+			NewMessage_NestedBuilder().
+				WithField(789).
+				Build(),
+		)
 
 	want := &Message{
 		FieldA: 123,
 		FieldB: "abc",
 		Group: &Message_FieldC{
 			FieldC: 456,
+		},
+		Nested: &Message_Nested{
+			Field: 789,
 		},
 	}
 

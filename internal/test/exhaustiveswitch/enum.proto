@@ -12,3 +12,15 @@ enum Direction {
   SINISTER = -1;
   DEXTER = 1;
 }
+
+message NestedEnum {
+  enum Direction {
+    option allow_alias = true;
+
+    UNKNOWN = 0;
+    LEFT = -1;
+    RIGHT = 1;
+    SINISTER = -1;
+    DEXTER = 1;
+  }
+}

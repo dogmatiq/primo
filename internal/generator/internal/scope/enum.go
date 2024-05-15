@@ -7,9 +7,10 @@ import (
 
 // Enum encapsulates information about a single enum type.
 type Enum struct {
-	File       *File
-	Descriptor *descriptorpb.EnumDescriptorProto
-	GoTypeName string
+	File             *File
+	Descriptor       *descriptorpb.EnumDescriptorProto
+	GoTypeName       string
+	GoConstantPrefix string
 
 	members []*EnumMember
 }
@@ -23,7 +24,7 @@ func (e *Enum) Members() []*EnumMember {
 			m := &EnumMember{
 				Enum:           e,
 				Descriptor:     d,
-				GoConstantName: e.GoTypeName + "_" + identifier.Exported(d.GetName()),
+				GoConstantName: e.GoConstantPrefix + identifier.Exported(d.GetName()),
 			}
 
 			if c, ok := canonical[d.GetNumber()]; ok {

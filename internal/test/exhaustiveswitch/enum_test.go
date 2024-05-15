@@ -28,6 +28,26 @@ func TestEnumSwitch(t *testing.T) {
 			}
 		},
 	)
+
+	t.Run(
+		"it calls the function associated with the enum value of nested enums",
+		func(t *testing.T) {
+			t.Parallel()
+
+			called := false
+
+			Switch_NestedEnum_Direction(
+				NestedEnum_LEFT,
+				func(NestedEnum_UNKNOWN_Case) { panic("unexpected UNKNOWN direction") },
+				func(NestedEnum_SINISTER_Case) { called = true },
+				func(NestedEnum_DEXTER_Case) { panic("unexpected LEFT direction") },
+			)
+
+			if !called {
+				t.Fatalf("expected case function to be called")
+			}
+		},
+	)
 }
 func TestEnumMap(t *testing.T) {
 	t.Parallel()
@@ -43,6 +63,25 @@ func TestEnumMap(t *testing.T) {
 				func(Direction_UNKNOWN_Case) string { panic("unexpected UNKNOWN direction") },
 				func(Direction_SINISTER_Case) string { return "<value>" },
 				func(Direction_DEXTER_Case) string { panic("unexpected LEFT direction") },
+			)
+
+			if got != want {
+				t.Fatalf("unexpected result: got %q, want %q", got, want)
+			}
+		},
+	)
+
+	t.Run(
+		"it calls the function associated with the enum value of nested enums",
+		func(t *testing.T) {
+			t.Parallel()
+
+			want := "<value>"
+			got := Map_NestedEnum_Direction(
+				NestedEnum_LEFT,
+				func(NestedEnum_UNKNOWN_Case) string { panic("unexpected UNKNOWN direction") },
+				func(NestedEnum_SINISTER_Case) string { return "<value>" },
+				func(NestedEnum_DEXTER_Case) string { panic("unexpected LEFT direction") },
 			)
 
 			if got != want {

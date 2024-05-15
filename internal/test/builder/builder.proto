@@ -11,4 +11,7 @@ message Message {
     int32 field_c = 3;
     int32 field_d = 4;
   }
+
+  message Nested { int32 field = 1; }
+  Nested nested = 5;
 }
