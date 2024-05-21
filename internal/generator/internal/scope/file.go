@@ -12,8 +12,47 @@ type File struct {
 	GoPackagePath string
 	GoPackageName string
 
+	services []*Service
 	messages []*Message
 	enums    []*Enum
+}
+
+// Services returns the set of services defined in this file.
+func (f *File) Services() []*Service {
+	if f.services != nil {
+		return f.services
+	}
+
+	for _, d := range f.Descriptor.GetService() {
+		s := &Service{
+			File:       f,
+			Descriptor: d,
+			Name:       d.GetName(),
+		}
+
+		for _, md := range d.GetMethod() {
+			clientName := ""
+			if md.GetClientStreaming() || md.GetServerStreaming() {
+				clientName = identifier.Exported(s.Name) + "_" + identifier.Exported(md.GetName()) + "Client"
+			}
+
+			s.Methods = append(
+				s.Methods,
+				&Method{
+					Service:                   s,
+					Descriptor:                md,
+					Name:                      md.GetName(),
+					ClientStreaming:           md.GetClientStreaming(),
+					ServerStreaming:           md.GetServerStreaming(),
+					StreamingClientGoTypeName: clientName,
+				},
+			)
+		}
+
+		f.services = append(f.services, s)
+	}
+
+	return f.services
 }
 
 // Messages returns the set of messages defined in this file.

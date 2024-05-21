@@ -9,6 +9,7 @@ import (
 	"github.com/dogmatiq/primo/internal/generator/accessor"
 	"github.com/dogmatiq/primo/internal/generator/builder"
 	"github.com/dogmatiq/primo/internal/generator/exhaustiveswitch"
+	"github.com/dogmatiq/primo/internal/generator/grpcstub"
 	"github.com/dogmatiq/primo/internal/generator/internal/option"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 	"github.com/dogmatiq/primo/internal/generator/mutator"
@@ -36,10 +37,11 @@ func Generate(
 		ver,
 		req,
 		res,
+		accessor.Generate,
 		builder.Generate,
 		exhaustiveswitch.Generate,
+		grpcstub.Generate,
 		mutator.Generate,
-		accessor.Generate,
 	); err != nil {
 		res.Error = proto.String(err.Error())
 	}
