@@ -28,6 +28,7 @@ func TestOneOfSwitch(t *testing.T) {
 				func(v int32) { called = true },
 				func(m string) { panic("unexpected log operation") },
 				func(*Record_NamingCollision) { panic("unexpected NamingCollision operation") },
+				func() { panic("unexpected default case") },
 			)
 
 			if !called {
@@ -37,60 +38,46 @@ func TestOneOfSwitch(t *testing.T) {
 	)
 
 	t.Run(
-		"it panics if the field is nil",
+		"it calls the function associated with the default case if the one-of field is nil",
 		func(t *testing.T) {
 			t.Parallel()
 
-			rec := &Record{}
+			cases := []struct {
+				name   string
+				record *Record
+			}{
+				{
+					"nil message",
+					nil,
+				},
+				{
+					"nil field",
+					&Record{},
+				},
+			}
 
-			defer func() {
-				got := recover()
-				want := "Switch_Record_Operation: x.Operation is nil"
+			for _, c := range cases {
+				t.Run(
+					c.name,
+					func(t *testing.T) {
+						t.Parallel()
 
-				if got != want {
-					t.Fatalf(
-						"unexpected panic message: got %q, want %q",
-						got,
-						want,
-					)
-				}
-			}()
+						called := false
 
-			Switch_Record_Operation(
-				rec,
-				func(int32) { panic("unexpected increment operation") },
-				func(int32) { panic("unexpected decrement operation") },
-				func(string) { panic("unexpected log operation") },
-				func(*Record_NamingCollision) { panic("unexpected NamingCollision operation") },
-			)
-		},
-	)
+						Switch_Record_Operation(
+							c.record,
+							func(int32) { panic("unexpected increment operation") },
+							func(int32) { panic("unexpected decrement operation") },
+							func(string) { panic("unexpected log operation") },
+							func(*Record_NamingCollision) { panic("unexpected NamingCollision operation") },
+							func() { called = true },
+						)
 
-	t.Run(
-		"it panics if the message is nil",
-		func(t *testing.T) {
-			t.Parallel()
-
-			defer func() {
-				got := recover()
-				want := "Switch_Record_Operation: x.Operation is nil"
-
-				if got != want {
-					t.Fatalf(
-						"unexpected panic message: got %q, want %q",
-						got,
-						want,
-					)
-				}
-			}()
-
-			Switch_Record_Operation(
-				nil,
-				func(int32) { panic("unexpected increment operation") },
-				func(int32) { panic("unexpected decrement operation") },
-				func(string) { panic("unexpected log operation") },
-				func(*Record_NamingCollision) { panic("unexpected NamingCollision operation") },
-			)
+						if !called {
+							t.Fatalf("expected case function to be called")
+						}
+					})
+			}
 		},
 	)
 }
@@ -116,6 +103,7 @@ func TestOneOfMap(t *testing.T) {
 				func(v int32) int32 { return v - 1 },
 				func(m string) int32 { panic("unexpected log operation") },
 				func(*Record_NamingCollision) int32 { panic("unexpected NamingCollision operation") },
+				func() int32 { panic("unexpected default case") },
 			)
 
 			if got != want {
@@ -125,60 +113,45 @@ func TestOneOfMap(t *testing.T) {
 	)
 
 	t.Run(
-		"it panics if the field is nil",
+		"it calls the function associated with the default case if the one-of field is nil",
 		func(t *testing.T) {
 			t.Parallel()
 
-			rec := &Record{}
+			cases := []struct {
+				name   string
+				record *Record
+			}{
+				{
+					"nil message",
+					nil,
+				},
+				{
+					"nil field",
+					&Record{},
+				},
+			}
 
-			defer func() {
-				got := recover()
-				want := "Map_Record_Operation: x.Operation is nil"
+			for _, c := range cases {
+				t.Run(
+					c.name,
+					func(t *testing.T) {
+						t.Parallel()
 
-				if got != want {
-					t.Fatalf(
-						"unexpected panic message: got %q, want %q",
-						got,
-						want,
-					)
-				}
-			}()
+						want := int32(123)
+						got := Map_Record_Operation(
+							c.record,
+							func(int32) int32 { panic("unexpected increment operation") },
+							func(int32) int32 { panic("unexpected decrement operation") },
+							func(string) int32 { panic("unexpected log operation") },
+							func(*Record_NamingCollision) int32 { panic("unexpected NamingCollision operation") },
+							func() int32 { return 123 },
+						)
 
-			Map_Record_Operation(
-				rec,
-				func(int32) error { panic("unexpected increment operation") },
-				func(int32) error { panic("unexpected decrement operation") },
-				func(string) error { panic("unexpected log operation") },
-				func(*Record_NamingCollision) error { panic("unexpected NamingCollision operation") },
-			)
-		},
-	)
-
-	t.Run(
-		"it panics if the message is nil",
-		func(t *testing.T) {
-			t.Parallel()
-
-			defer func() {
-				got := recover()
-				want := "Map_Record_Operation: x.Operation is nil"
-
-				if got != want {
-					t.Fatalf(
-						"unexpected panic message: got %q, want %q",
-						got,
-						want,
-					)
-				}
-			}()
-
-			Map_Record_Operation(
-				nil,
-				func(int32) error { panic("unexpected increment operation") },
-				func(int32) error { panic("unexpected decrement operation") },
-				func(string) error { panic("unexpected log operation") },
-				func(*Record_NamingCollision) error { panic("unexpected NamingCollision operation") },
-			)
+						if got != want {
+							t.Fatalf("unexpected result: got %q, want %q", got, want)
+						}
+					})
+			}
 		},
 	)
 }

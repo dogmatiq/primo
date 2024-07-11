@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog], and this project adheres to
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [0.3.0] - 2024-07-11
+
+### Changed
+
+- **[BC]** Added a mandatory `default_` parameter to the `Map_XXX()` and
+  `Switch_XXX()` functions generated for one-of fields.
+
 ## [0.2.4] - 2024-07-11
 
 ### Fixed
@@ -105,6 +112,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.2.2]: https://github.com/dogmatiq/primo/releases/tag/v0.2.2
 [0.2.3]: https://github.com/dogmatiq/primo/releases/tag/v0.2.3
 [0.2.4]: https://github.com/dogmatiq/primo/releases/tag/v0.2.4
+[0.3.0]: https://github.com/dogmatiq/primo/releases/tag/v0.3.0
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD

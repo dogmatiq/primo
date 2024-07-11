@@ -1,8 +1,6 @@
 package exhaustiveswitch
 
 import (
-	"fmt"
-
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 )
@@ -31,7 +29,7 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 		)
 	code.Comment("")
 	code.Commentf(
-		"It panics if x.%s is nil.",
+		"It calls the function associated with the default case if x.%s is nil.",
 		g.GoFieldName,
 	)
 
@@ -55,6 +53,12 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 							o.Field.GoType(),
 						)
 				}
+
+				code.
+					Line().
+					Id("default_").
+					Func().
+					Params()
 
 				code.Line()
 			},
@@ -90,15 +94,8 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 
 						code.
 							Default().
-							Panic(
-								jen.Lit(
-									fmt.Sprintf(
-										"%s: x.%s is nil",
-										funcName,
-										g.GoFieldName,
-									),
-								),
-							)
+							Id("default_").
+							Call()
 					},
 				),
 		)
@@ -119,8 +116,11 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 		"It invokes the function that corresponds to the value of x.%s,",
 		g.GoFieldName,
 	)
+	code.Comment(
+		"and returns that function's result. It calls the function associated with",
+	)
 	code.Commentf(
-		"and returns that function's result. It panics if x.%s is nil.",
+		"the default case if x.%s is nil.",
 		g.GoFieldName,
 	)
 
@@ -150,6 +150,15 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 							jen.Id("T"),
 						)
 				}
+
+				code.
+					Line().
+					Id("default_").
+					Func().
+					Params().
+					Params(
+						jen.Id("T"),
+					)
 
 				code.Line()
 			},
@@ -189,15 +198,9 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 
 						code.
 							Default().
-							Panic(
-								jen.Lit(
-									fmt.Sprintf(
-										"%s: x.%s is nil",
-										funcName,
-										g.GoFieldName,
-									),
-								),
-							)
+							Return().
+							Id("default_").
+							Call()
 					},
 				),
 		)
