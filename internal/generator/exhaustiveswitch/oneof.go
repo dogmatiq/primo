@@ -66,7 +66,8 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 						Id("v").
 						Op(":=").
 						Id("x").
-						Dot(g.GoFieldName).
+						Dot("Get" + g.GoFieldName).
+						Call().
 						Op(".").
 						Call(jen.Type()),
 				).
@@ -163,7 +164,8 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 						Id("v").
 						Op(":=").
 						Id("x").
-						Dot(g.GoFieldName).
+						Dot("Get" + g.GoFieldName).
+						Call().
 						Op(".").
 						Call(jen.Type()),
 				).

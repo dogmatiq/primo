@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog], and this project adheres to
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [0.2.4] - 2024-07-11
+
+### Fixed
+
+- Fixed panic when calling `Map_XXX()` and `Switch_XXX()` with a `nil` message.
+
 ## [0.2.3] - 2024-05-22
 
 ### Added
@@ -97,6 +103,8 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.2.0]: https://github.com/dogmatiq/primo/releases/tag/v0.2.0
 [0.2.1]: https://github.com/dogmatiq/primo/releases/tag/v0.2.1
 [0.2.2]: https://github.com/dogmatiq/primo/releases/tag/v0.2.2
+[0.2.3]: https://github.com/dogmatiq/primo/releases/tag/v0.2.3
+[0.2.4]: https://github.com/dogmatiq/primo/releases/tag/v0.2.4
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD
