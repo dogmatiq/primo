@@ -29,7 +29,7 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 		)
 	code.Comment("")
 	code.Commentf(
-		"It calls the function associated with the default case if x.%s is nil.",
+		"It calls none() if x.%s is nil.",
 		g.GoFieldName,
 	)
 
@@ -56,7 +56,7 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 
 				code.
 					Line().
-					Id("default_").
+					Id("none").
 					Func().
 					Params()
 
@@ -94,7 +94,7 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 
 						code.
 							Default().
-							Id("default_").
+							Id("none").
 							Call()
 					},
 				),
@@ -116,11 +116,8 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 		"It invokes the function that corresponds to the value of x.%s,",
 		g.GoFieldName,
 	)
-	code.Comment(
-		"and returns that function's result. It calls the function associated with",
-	)
 	code.Commentf(
-		"the default case if x.%s is nil.",
+		"and returns that function's result. It calls none() if x.%s is nil.",
 		g.GoFieldName,
 	)
 
@@ -153,7 +150,7 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 
 				code.
 					Line().
-					Id("default_").
+					Id("none").
 					Func().
 					Params().
 					Params(
@@ -199,7 +196,7 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 						code.
 							Default().
 							Return().
-							Id("default_").
+							Id("none").
 							Call()
 					},
 				),
