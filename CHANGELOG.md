@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog], and this project adheres to
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 
+## [0.3.1] - 2024-07-16
+
+### Added
+
+- Added `MustSwitch_XXX()` and `MustMap_XXX()` functions for one-of groups.
+  These functions panic if the message or the one-of discriminator field is
+  `nil`. This is the same behavior that `Switch_XXX()` and `Map_XXX()` had prior
+  to [0.3.0].
+
 ## [0.3.0] - 2024-07-11
 
 ### Changed
@@ -113,6 +122,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.2.3]: https://github.com/dogmatiq/primo/releases/tag/v0.2.3
 [0.2.4]: https://github.com/dogmatiq/primo/releases/tag/v0.2.4
 [0.3.0]: https://github.com/dogmatiq/primo/releases/tag/v0.3.0
+[0.3.1]: https://github.com/dogmatiq/primo/releases/tag/v0.3.1
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD
