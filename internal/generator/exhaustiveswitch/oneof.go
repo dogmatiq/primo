@@ -1,21 +1,31 @@
 package exhaustiveswitch
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
 )
 
 func generateForOneOf(code *jen.File, g *scope.OneOfGroup) {
-	generateOneOfSwitch(code, g)
-	generateOneOfMap(code, g)
+	generateOneOfSwitch(code, g, true)
+	generateOneOfSwitch(code, g, false)
+	generateOneOfMap(code, g, true)
+	generateOneOfMap(code, g, false)
 }
 
 func oneOfCaseFuncName(o *scope.OneOfOption) string {
 	return "case" + o.DiscriminatorFieldName
 }
 
-func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
+func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
 	funcName := "Switch_" + g.Message.GoTypeName + "_" + g.GoFieldName
+	nilBehavior := "calls none()"
+
+	if panicOnNil {
+		funcName = "Must" + funcName
+		nilBehavior = "panics"
+	}
 
 	code.
 		Commentf(
@@ -28,10 +38,12 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 			g.GoFieldName,
 		)
 	code.Comment("")
-	code.Commentf(
-		"It calls none() if x.%s is nil.",
-		g.GoFieldName,
-	)
+	code.
+		Commentf(
+			"It %s if x.%s is nil.",
+			nilBehavior,
+			g.GoFieldName,
+		)
 
 	code.
 		Func().
@@ -54,11 +66,13 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 						)
 				}
 
-				code.
-					Line().
-					Id("none").
-					Func().
-					Params()
+				if !panicOnNil {
+					code.
+						Line().
+						Id("none").
+						Func().
+						Params()
+				}
 
 				code.Line()
 			},
@@ -92,17 +106,37 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup) {
 								)
 						}
 
-						code.
-							Default().
-							Id("none").
-							Call()
+						if panicOnNil {
+							code.
+								Default().
+								Panic(
+									jen.Lit(
+										fmt.Sprintf(
+											"%s: x.%s is nil",
+											funcName,
+											g.GoFieldName,
+										),
+									),
+								)
+						} else {
+							code.
+								Default().
+								Id("none").
+								Call()
+						}
 					},
 				),
 		)
 }
 
-func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
+func generateOneOfMap(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
 	funcName := "Map_" + g.Message.GoTypeName + "_" + g.GoFieldName
+	nilBehavior := "calls none()"
+
+	if panicOnNil {
+		funcName = "Must" + funcName
+		nilBehavior = "panics"
+	}
 
 	code.
 		Commentf(
@@ -117,7 +151,8 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 		g.GoFieldName,
 	)
 	code.Commentf(
-		"and returns that function's result. It calls none() if x.%s is nil.",
+		"and returns that function's result. It %s if x.%s is nil.",
+		nilBehavior,
 		g.GoFieldName,
 	)
 
@@ -148,14 +183,16 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 						)
 				}
 
-				code.
-					Line().
-					Id("none").
-					Func().
-					Params().
-					Params(
-						jen.Id("T"),
-					)
+				if !panicOnNil {
+					code.
+						Line().
+						Id("none").
+						Func().
+						Params().
+						Params(
+							jen.Id("T"),
+						)
+				}
 
 				code.Line()
 			},
@@ -193,11 +230,25 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup) {
 								)
 						}
 
-						code.
-							Default().
-							Return().
-							Id("none").
-							Call()
+						if panicOnNil {
+							code.
+								Default().
+								Panic(
+									jen.Lit(
+										fmt.Sprintf(
+											"%s: x.%s is nil",
+											funcName,
+											g.GoFieldName,
+										),
+									),
+								)
+						} else {
+							code.
+								Default().
+								Return().
+								Id("none").
+								Call()
+						}
 					},
 				),
 		)

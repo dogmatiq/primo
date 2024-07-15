@@ -38,7 +38,7 @@ func TestOneOfSwitch(t *testing.T) {
 	)
 
 	t.Run(
-		"it calls the function associated with the default case if the one-of field is nil",
+		"it calls the 'none' function if the one-of field is nil",
 		func(t *testing.T) {
 			t.Parallel()
 
@@ -82,6 +82,80 @@ func TestOneOfSwitch(t *testing.T) {
 	)
 }
 
+func TestOneOfMustSwitch(t *testing.T) {
+	t.Parallel()
+
+	t.Run(
+		"it calls the function associated with the populated one-of option",
+		func(t *testing.T) {
+			t.Parallel()
+
+			rec := &Record{
+				Operation: &Record_Decrement{
+					Decrement: 123,
+				},
+			}
+
+			called := false
+
+			MustSwitch_Record_Operation(
+				rec,
+				func(v int32) { panic("unexpected increment operation") },
+				func(v int32) { called = true },
+				func(m string) { panic("unexpected log operation") },
+				func(*Record_NamingCollision) { panic("unexpected NamingCollision operation") },
+			)
+
+			if !called {
+				t.Fatalf("expected case function to be called")
+			}
+		},
+	)
+
+	t.Run(
+		"panics if the one-of field is nil",
+		func(t *testing.T) {
+			t.Parallel()
+
+			cases := []struct {
+				name   string
+				record *Record
+			}{
+				{
+					"nil message",
+					nil,
+				},
+				{
+					"nil field",
+					&Record{},
+				},
+			}
+
+			for _, c := range cases {
+				t.Run(
+					c.name,
+					func(t *testing.T) {
+						t.Parallel()
+
+						defer func() {
+							if r := recover(); r == nil {
+								t.Fatalf("expected panic")
+							}
+						}()
+
+						MustSwitch_Record_Operation(
+							c.record,
+							func(int32) { panic("unexpected increment operation") },
+							func(int32) { panic("unexpected decrement operation") },
+							func(string) { panic("unexpected log operation") },
+							func(*Record_NamingCollision) { panic("unexpected NamingCollision operation") },
+						)
+					})
+			}
+		},
+	)
+}
+
 func TestOneOfMap(t *testing.T) {
 	t.Parallel()
 
@@ -113,7 +187,7 @@ func TestOneOfMap(t *testing.T) {
 	)
 
 	t.Run(
-		"it calls the function associated with the default case if the one-of field is nil",
+		"it calls the 'none' function if the one-of field is nil",
 		func(t *testing.T) {
 			t.Parallel()
 
@@ -150,6 +224,79 @@ func TestOneOfMap(t *testing.T) {
 						if got != want {
 							t.Fatalf("unexpected result: got %q, want %q", got, want)
 						}
+					})
+			}
+		},
+	)
+}
+
+func TestOneOfMustMap(t *testing.T) {
+	t.Parallel()
+
+	t.Run(
+		"it calls the function associated with the populated one-of option",
+		func(t *testing.T) {
+			t.Parallel()
+
+			rec := &Record{
+				Operation: &Record_Decrement{
+					Decrement: 123,
+				},
+			}
+
+			want := int32(122)
+			got := MustMap_Record_Operation(
+				rec,
+				func(v int32) int32 { panic("unexpected increment operation") },
+				func(v int32) int32 { return v - 1 },
+				func(m string) int32 { panic("unexpected log operation") },
+				func(*Record_NamingCollision) int32 { panic("unexpected NamingCollision operation") },
+			)
+
+			if got != want {
+				t.Fatalf("unexpected result: got %q, want %q", got, want)
+			}
+		},
+	)
+
+	t.Run(
+		"panics if the one-of field is nil",
+		func(t *testing.T) {
+			t.Parallel()
+
+			cases := []struct {
+				name   string
+				record *Record
+			}{
+				{
+					"nil message",
+					nil,
+				},
+				{
+					"nil field",
+					&Record{},
+				},
+			}
+
+			for _, c := range cases {
+				t.Run(
+					c.name,
+					func(t *testing.T) {
+						t.Parallel()
+
+						defer func() {
+							if r := recover(); r == nil {
+								t.Fatalf("expected panic")
+							}
+						}()
+
+						MustMap_Record_Operation(
+							c.record,
+							func(int32) int32 { panic("unexpected increment operation") },
+							func(int32) int32 { panic("unexpected decrement operation") },
+							func(string) int32 { panic("unexpected log operation") },
+							func(*Record_NamingCollision) int32 { panic("unexpected NamingCollision operation") },
+						)
 					})
 			}
 		},
