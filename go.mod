@@ -6,7 +6,7 @@ toolchain go1.22.9
 
 require (
 	github.com/dave/jennifer v1.7.1
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 )
