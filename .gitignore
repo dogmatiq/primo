@@ -7,3 +7,4 @@
 # prerequisite of building the protoc-gen-go-primo binary, but that binary is
 # required to build these files.
 *_primo.pb.go
+.vscode/settings.json
