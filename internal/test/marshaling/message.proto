@@ -1,0 +1,6 @@
+syntax = "proto3";
+package primo.test.marshaling;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/marshaling";
+
+message Message { string value = 1; }

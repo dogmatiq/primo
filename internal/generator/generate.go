@@ -12,15 +12,11 @@ import (
 	"github.com/dogmatiq/primo/internal/generator/grpcstub"
 	"github.com/dogmatiq/primo/internal/generator/internal/option"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
+	"github.com/dogmatiq/primo/internal/generator/marshaling"
 	"github.com/dogmatiq/primo/internal/generator/mutator"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
-)
-
-const (
-	protoPackage = "google.golang.org/protobuf/proto"
-	rootPackage  = "github.com/dogmatiq/primo"
 )
 
 // generator is a function that generates Go code for a given file.
@@ -41,6 +37,7 @@ func Generate(
 		builder.Generate,
 		exhaustiveswitch.Generate,
 		grpcstub.Generate,
+		marshaling.Generate,
 		mutator.Generate,
 	); err != nil {
 		res.Error = proto.String(err.Error())
