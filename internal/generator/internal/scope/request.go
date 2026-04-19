@@ -78,6 +78,19 @@ func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto) jen.Co
 		return jen.Index().Add(expr)
 	}
 
+	// Proto3 optional scalars are represented as pointer types in the generated
+	// Go code (e.g. *int32, *string). Message fields are already *T and bytes
+	// fields are []byte, so only plain scalars and enums need wrapping.
+	if fd.GetProto3Optional() {
+		switch fd.GetType() {
+		case descriptorpb.FieldDescriptorProto_TYPE_MESSAGE,
+			descriptorpb.FieldDescriptorProto_TYPE_BYTES:
+			// Already *T or []byte; no extra pointer needed.
+		default:
+			return jen.Op("*").Add(expr)
+		}
+	}
+
 	return expr
 }
 
