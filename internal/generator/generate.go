@@ -27,7 +27,11 @@ func Generate(
 	ver string,
 	req *pluginpb.CodeGeneratorRequest,
 ) *pluginpb.CodeGeneratorResponse {
-	res := &pluginpb.CodeGeneratorResponse{}
+	res := &pluginpb.CodeGeneratorResponse{
+		SupportedFeatures: proto.Uint64(uint64(
+			pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL,
+		)),
+	}
 
 	if err := generate(
 		ver,

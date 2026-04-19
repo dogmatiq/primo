@@ -1,6 +1,8 @@
 package scope
 
 import (
+	"slices"
+
 	"github.com/dogmatiq/primo/internal/generator/internal/identifier"
 	"google.golang.org/protobuf/types/descriptorpb"
 )
@@ -46,7 +48,11 @@ func (m *Message) Fields() []*Field {
 				f.GoFieldName += "_"
 			}
 
-			if d.OneofIndex != nil {
+			// Proto3 optional fields have a synthetic oneof_decl entry in the
+			// descriptor, but they are not real oneofs. Skip the oneof branch
+			// for these fields so that they are treated as plain optional
+			// fields.
+			if d.OneofIndex != nil && !d.GetProto3Optional() {
 				group := m.groups[d.GetOneofIndex()]
 
 				fieldName := f.GoFieldName
@@ -69,6 +75,12 @@ func (m *Message) Fields() []*Field {
 
 			m.fields = append(m.fields, f)
 		}
+
+		// Remove synthetic oneof groups (those created for proto3 optional
+		// fields) which have no options after field processing.
+		m.groups = slices.DeleteFunc(m.groups, func(g *OneOfGroup) bool {
+			return len(g.Options) == 0
+		})
 	}
 
 	return m.fields
