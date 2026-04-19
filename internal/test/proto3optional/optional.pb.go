@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v7.34.1
-// source: github.com/dogmatiq/primo/internal/test/proto3optional/proto3optional.proto
+// source: github.com/dogmatiq/primo/internal/test/proto3optional/optional.proto
 
 package proto3optional
 
@@ -54,11 +54,11 @@ func (x Status) String() string {
 }
 
 func (Status) Descriptor() protoreflect.EnumDescriptor {
-	return file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_enumTypes[0].Descriptor()
+	return file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_enumTypes[0].Descriptor()
 }
 
 func (Status) Type() protoreflect.EnumType {
-	return &file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_enumTypes[0]
+	return &file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_enumTypes[0]
 }
 
 func (x Status) Number() protoreflect.EnumNumber {
@@ -67,7 +67,7 @@ func (x Status) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Status.Descriptor instead.
 func (Status) EnumDescriptor() ([]byte, []int) {
-	return file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescGZIP(), []int{0}
+	return file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescGZIP(), []int{0}
 }
 
 // Message contains a mix of proto3 optional fields and a real oneof, to verify
@@ -90,7 +90,7 @@ type Message struct {
 
 func (x *Message) Reset() {
 	*x = Message{}
-	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes[0]
+	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -102,7 +102,7 @@ func (x *Message) String() string {
 func (*Message) ProtoMessage() {}
 
 func (x *Message) ProtoReflect() protoreflect.Message {
-	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes[0]
+	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -115,7 +115,7 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
-	return file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescGZIP(), []int{0}
+	return file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Message) GetNum() int32 {
@@ -202,7 +202,7 @@ type Message_Child struct {
 
 func (x *Message_Child) Reset() {
 	*x = Message_Child{}
-	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes[1]
+	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -214,7 +214,7 @@ func (x *Message_Child) String() string {
 func (*Message_Child) ProtoMessage() {}
 
 func (x *Message_Child) ProtoReflect() protoreflect.Message {
-	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes[1]
+	mi := &file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -227,14 +227,14 @@ func (x *Message_Child) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message_Child.ProtoReflect.Descriptor instead.
 func (*Message_Child) Descriptor() ([]byte, []int) {
-	return file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescGZIP(), []int{0, 0}
+	return file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescGZIP(), []int{0, 0}
 }
 
-var File_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto protoreflect.FileDescriptor
+var File_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto protoreflect.FileDescriptor
 
-const file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDesc = "" +
+const file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDesc = "" +
 	"\n" +
-	"Kgithub.com/dogmatiq/primo/internal/test/proto3optional/proto3optional.proto\x12\x19primo.test.proto3optional\"\xd0\x02\n" +
+	"Egithub.com/dogmatiq/primo/internal/test/proto3optional/optional.proto\x12\x19primo.test.proto3optional\"\xd0\x02\n" +
 	"\aMessage\x12\x15\n" +
 	"\x03num\x18\x01 \x01(\x05H\x01R\x03num\x88\x01\x01\x12\x15\n" +
 	"\x03str\x18\x02 \x01(\tH\x02R\x03str\x88\x01\x01\x12\x17\n" +
@@ -257,25 +257,25 @@ const file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional
 	"STATUS_ERR\x10\x02B8Z6github.com/dogmatiq/primo/internal/test/proto3optionalb\x06proto3"
 
 var (
-	file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescOnce sync.Once
-	file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescData []byte
+	file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescOnce sync.Once
+	file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescData []byte
 )
 
-func file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescGZIP() []byte {
-	file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescOnce.Do(func() {
-		file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDesc), len(file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDesc)))
+func file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescGZIP() []byte {
+	file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescOnce.Do(func() {
+		file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDesc), len(file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDesc)))
 	})
-	return file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDescData
+	return file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDescData
 }
 
-var file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_goTypes = []any{
+var file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_goTypes = []any{
 	(Status)(0),           // 0: primo.test.proto3optional.Status
 	(*Message)(nil),       // 1: primo.test.proto3optional.Message
 	(*Message_Child)(nil), // 2: primo.test.proto3optional.Message.Child
 }
-var file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_depIdxs = []int32{
+var file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_depIdxs = []int32{
 	0, // 0: primo.test.proto3optional.Message.status:type_name -> primo.test.proto3optional.Status
 	2, // 1: primo.test.proto3optional.Message.child:type_name -> primo.test.proto3optional.Message.Child
 	2, // [2:2] is the sub-list for method output_type
@@ -285,12 +285,12 @@ var file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_p
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_init() }
-func file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_init() {
-	if File_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto != nil {
+func init() { file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_init() }
+func file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_init() {
+	if File_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto != nil {
 		return
 	}
-	file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes[0].OneofWrappers = []any{
+	file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes[0].OneofWrappers = []any{
 		(*Message_ChoiceA)(nil),
 		(*Message_ChoiceB)(nil),
 	}
@@ -298,18 +298,18 @@ func file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDesc), len(file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDesc), len(file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_rawDesc)),
 			NumEnums:      1,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_goTypes,
-		DependencyIndexes: file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_depIdxs,
-		EnumInfos:         file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_enumTypes,
-		MessageInfos:      file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_msgTypes,
+		GoTypes:           file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_goTypes,
+		DependencyIndexes: file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_depIdxs,
+		EnumInfos:         file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_enumTypes,
+		MessageInfos:      file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_msgTypes,
 	}.Build()
-	File_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto = out.File
-	file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_goTypes = nil
-	file_github_com_dogmatiq_primo_internal_test_proto3optional_proto3optional_proto_depIdxs = nil
+	File_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto = out.File
+	file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_goTypes = nil
+	file_github_com_dogmatiq_primo_internal_test_proto3optional_optional_proto_depIdxs = nil
 }
