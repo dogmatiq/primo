@@ -8,14 +8,14 @@ import (
 // generateForOneOfOption generates a mutator method for a field that is a
 // option in a one-of group.
 func generateForOneOfOption(code *jen.File, f *scope.Field) {
-	methodName := "Set" + f.OneOfOption.DiscriminatorFieldName
+	methodName := "Set" + f.OneOfOption.GoIdentifiers.Base
 
 	code.
 		Commentf(
 			"%s sets the x.%s field to a [%s] value containing v,",
 			methodName,
-			f.OneOfOption.Group.GoFieldName,
-			f.OneOfOption.DiscriminatorTypeName,
+			f.OneOfOption.Group.GoIdentifiers.ExportedField,
+			f.OneOfOption.GoIdentifiers.DiscriminatorType,
 		)
 	code.Comment("then returns x.")
 
@@ -37,12 +37,12 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 		Block(
 			jen.
 				Id("x").
-				Dot(f.GoFieldName).
+				Dot(f.GoIdentifiers.ExportedField).
 				Op("=").
 				Op("&").
-				Id(f.OneOfOption.DiscriminatorTypeName).
+				Id(f.OneOfOption.GoIdentifiers.DiscriminatorType).
 				Values(
-					jen.Id(f.OneOfOption.DiscriminatorFieldName).Op(":").Id("v"),
+					jen.Id(f.OneOfOption.GoIdentifiers.Base).Op(":").Id("v"),
 				),
 		)
 }

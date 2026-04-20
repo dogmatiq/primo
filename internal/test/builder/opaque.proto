@@ -1,0 +1,24 @@
+edition = "2024";
+
+package primo.test.builder;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/builder";
+
+// OpaqueMessage is an opaque API message used to verify that primo's builder
+// generator produces correct builders for opaque API messages.
+message OpaqueMessage {
+  int32 field_a = 1;
+  string field_b = 2;
+
+  oneof group {
+    int32 field_c = 3;
+    int32 field_d = 4;
+  }
+
+  message Nested { int32 field = 1; }
+  Nested nested = 5;
+
+  // field_e uses implicit presence, so its Go type is int32 (not *int32)
+  // even though the file-level default is EXPLICIT.
+  int32 field_e = 6 [features.field_presence = IMPLICIT];
+}

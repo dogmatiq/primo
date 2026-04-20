@@ -15,11 +15,11 @@ func generateForOneOf(code *jen.File, g *scope.OneOfGroup) {
 }
 
 func oneOfCaseFuncName(o *scope.OneOfOption) string {
-	return "case" + o.DiscriminatorFieldName
+	return "case" + o.GoIdentifiers.Base
 }
 
 func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
-	funcName := "Switch_" + g.Message.GoTypeName + "_" + g.GoFieldName
+	funcName := "Switch_" + g.Message.GoTypeName + "_" + g.GoIdentifiers.Base
 	nilBehavior := "calls none()"
 
 	if panicOnNil {
@@ -35,14 +35,14 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
 	code.
 		Commentf(
 			"the value of x.%s.",
-			g.GoFieldName,
+			g.GoIdentifiers.Base,
 		)
 	code.Comment("")
 	code.
 		Commentf(
 			"It %s if x.%s is nil.",
 			nilBehavior,
-			g.GoFieldName,
+			g.GoIdentifiers.Base,
 		)
 
 	code.
@@ -78,59 +78,12 @@ func generateOneOfSwitch(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
 			},
 		).
 		Block(
-			jen.
-				Switch(
-					jen.
-						Id("v").
-						Op(":=").
-						Id("x").
-						Dot("Get" + g.GoFieldName).
-						Call().
-						Op(".").
-						Call(jen.Type()),
-				).
-				BlockFunc(
-					func(code *jen.Group) {
-						for _, o := range g.Options {
-							code.
-								Case(
-									jen.
-										Op("*").
-										Id(o.DiscriminatorTypeName),
-								).
-								Id(oneOfCaseFuncName(o)).
-								Call(
-									jen.
-										Id("v").
-										Dot(o.DiscriminatorFieldName),
-								)
-						}
-
-						if panicOnNil {
-							code.
-								Default().
-								Panic(
-									jen.Lit(
-										fmt.Sprintf(
-											"%s: x.%s is nil",
-											funcName,
-											g.GoFieldName,
-										),
-									),
-								)
-						} else {
-							code.
-								Default().
-								Id("none").
-								Call()
-						}
-					},
-				),
+			switchStmt(g, funcName, panicOnNil, false),
 		)
 }
 
 func generateOneOfMap(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
-	funcName := "Map_" + g.Message.GoTypeName + "_" + g.GoFieldName
+	funcName := "Map_" + g.Message.GoTypeName + "_" + g.GoIdentifiers.Base
 	nilBehavior := "calls none()"
 
 	if panicOnNil {
@@ -142,18 +95,18 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
 		Commentf(
 			"%s maps x.%s to a value of type T by invoking",
 			funcName,
-			g.GoFieldName,
+			g.GoIdentifiers.Base,
 		)
 	code.Comment("one of the given functions.")
 	code.Comment("")
 	code.Commentf(
 		"It invokes the function that corresponds to the value of x.%s,",
-		g.GoFieldName,
+		g.GoIdentifiers.Base,
 	)
 	code.Commentf(
 		"and returns that function's result. It %s if x.%s is nil.",
 		nilBehavior,
-		g.GoFieldName,
+		g.GoIdentifiers.Base,
 	)
 
 	code.
@@ -201,55 +154,75 @@ func generateOneOfMap(code *jen.File, g *scope.OneOfGroup, panicOnNil bool) {
 			jen.Id("T"),
 		).
 		Block(
-			jen.
-				Switch(
-					jen.
-						Id("v").
-						Op(":=").
-						Id("x").
-						Dot("Get" + g.GoFieldName).
-						Call().
-						Op(".").
-						Call(jen.Type()),
-				).
-				BlockFunc(
-					func(code *jen.Group) {
-						for _, o := range g.Options {
-							code.
-								Case(
-									jen.
-										Op("*").
-										Id(o.DiscriminatorTypeName),
-								).
-								Return().
-								Id(oneOfCaseFuncName(o)).
-								Call(
-									jen.
-										Id("v").
-										Dot(o.DiscriminatorFieldName),
-								)
-						}
-
-						if panicOnNil {
-							code.
-								Default().
-								Panic(
-									jen.Lit(
-										fmt.Sprintf(
-											"%s: x.%s is nil",
-											funcName,
-											g.GoFieldName,
-										),
-									),
-								)
-						} else {
-							code.
-								Default().
-								Return().
-								Id("none").
-								Call()
-						}
-					},
-				),
+			switchStmt(g, funcName, panicOnNil, true),
 		)
+}
+
+// switchStmt builds the switch statement body, handling both open API (type
+// switch on interface) and opaque API (WhichXxx + case constants) styles.
+// isMap controls whether each case ends with "return caseXxx(...)" (map style)
+// or just "caseXxx(...)" (switch style).
+func switchStmt(g *scope.OneOfGroup, funcName string, isMust, isMap bool) *jen.Statement {
+	if g.Message.File.IsOpaqueAPI() {
+		return switchStmtOpaque(g, funcName, isMust, isMap)
+	}
+	return switchStmtOpen(g, funcName, isMust, isMap)
+}
+
+// switchStmtOpen generates a type-switch over the interface returned by GetXxx().
+func switchStmtOpen(g *scope.OneOfGroup, funcName string, isMust, isMap bool) *jen.Statement {
+	return jen.Switch(
+		jen.
+			Id("v").
+			Op(":=").
+			Id("x").
+			Dot(g.GoIdentifiers.GetMethod).
+			Call().
+			Op(".").
+			Call(jen.Type()),
+	).BlockFunc(func(code *jen.Group) {
+		for _, o := range g.Options {
+			caseCall := jen.Id(oneOfCaseFuncName(o)).
+				Call(jen.Id("v").Dot(o.GoIdentifiers.Base))
+			if isMap {
+				code.Case(jen.Op("*").Id(o.GoIdentifiers.DiscriminatorType)).Return(caseCall)
+			} else {
+				code.Case(jen.Op("*").Id(o.GoIdentifiers.DiscriminatorType)).Add(caseCall)
+			}
+		}
+
+		if isMust {
+			code.Default().Panic(jen.Lit(fmt.Sprintf("%s: x.%s is nil", funcName, g.GoIdentifiers.Base)))
+		} else if isMap {
+			code.Default().Return().Id("none").Call()
+		} else {
+			code.Default().Id("none").Call()
+		}
+	})
+}
+
+// switchStmtOpaque generates a switch over WhichXxx(), using the case constants
+// generated by protoc-gen-go for opaque API files.
+func switchStmtOpaque(g *scope.OneOfGroup, funcName string, isMust, isMap bool) *jen.Statement {
+	return jen.Switch(
+		jen.Id("x").Dot(g.GoIdentifiers.WhichMethod).Call(),
+	).BlockFunc(func(code *jen.Group) {
+		for _, o := range g.Options {
+			caseCall := jen.Id(oneOfCaseFuncName(o)).
+				Call(jen.Id("x").Dot(o.GoIdentifiers.GetMethod).Call())
+			if isMap {
+				code.Case(jen.Id(o.GoIdentifiers.CaseConstant)).Return(caseCall)
+			} else {
+				code.Case(jen.Id(o.GoIdentifiers.CaseConstant)).Add(caseCall)
+			}
+		}
+
+		if isMust {
+			code.Default().Panic(jen.Lit(fmt.Sprintf("%s: x.%s is not set", funcName, g.GoIdentifiers.Base)))
+		} else if isMap {
+			code.Default().Return().Id("none").Call()
+		} else {
+			code.Default().Id("none").Call()
+		}
+	})
 }

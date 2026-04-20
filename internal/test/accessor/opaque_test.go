@@ -6,7 +6,7 @@ import (
 	. "github.com/dogmatiq/primo/internal/test/accessor"
 )
 
-func TestOneOfAccessor_open(t *testing.T) {
+func TestOneOfAccessor_opaque(t *testing.T) {
 	t.Parallel()
-	testOneOfAccessorSuite[*OneOf](t)
+	testOneOfAccessorSuite[*OpaqueOneOf](t)
 }

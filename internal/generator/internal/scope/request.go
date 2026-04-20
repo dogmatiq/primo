@@ -55,7 +55,7 @@ func (r *Request) hasGoType(pkgPath, name string) bool {
 	return ok
 }
 
-func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto) jen.Code {
+func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto, explicitPresence bool) jen.Code {
 	populateTypes(r)
 
 	if md, ok := r.pbMaps[fd.GetTypeName()]; ok {
@@ -63,9 +63,9 @@ func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto) jen.Co
 
 		for _, mfd := range md.GetField() {
 			if mfd.GetNumber() == 1 {
-				key = r.typeExprForField(mfd)
+				key = r.typeExprForField(mfd, false)
 			} else {
-				value = r.typeExprForField(mfd)
+				value = r.typeExprForField(mfd, false)
 			}
 		}
 
@@ -78,10 +78,11 @@ func (r *Request) typeExprForField(fd *descriptorpb.FieldDescriptorProto) jen.Co
 		return jen.Index().Add(expr)
 	}
 
-	// Proto3 optional scalars are represented as pointer types in the generated
-	// Go code (e.g. *int32, *string). Message fields are already *T and bytes
-	// fields are []byte, so only plain scalars and enums need wrapping.
-	if fd.GetProto3Optional() {
+	// Fields with explicit presence are represented as pointer types in the
+	// generated Go code (e.g. *int32, *string). Message fields are already *T
+	// and bytes fields are []byte, so only plain scalars and enums need
+	// wrapping.
+	if explicitPresence {
 		switch fd.GetType() {
 		case descriptorpb.FieldDescriptorProto_TYPE_MESSAGE,
 			descriptorpb.FieldDescriptorProto_TYPE_BYTES:

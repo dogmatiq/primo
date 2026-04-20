@@ -46,26 +46,45 @@ func generateFromMethod(code *jen.File, m *scope.Message) {
 		).
 		BlockFunc(
 			func(code *jen.Group) {
-				for _, f := range m.Fields() {
-					if f.OneOfOption == nil {
+				if m.File.IsOpaqueAPI() {
+					for _, f := range m.Fields() {
+						setCall := jen.
+							Id(receiverName).
+							Dot(prototypeFieldName).
+							Dot(f.GoIdentifiers.SetMethod).
+							Call(
+								jen.Id("x").Dot(f.GoIdentifiers.GetMethod).Call(),
+							)
+						if f.GoIdentifiers.HasMethod != "" {
+							code.
+								If(jen.Id("x").Dot(f.GoIdentifiers.HasMethod).Call()).
+								Block(setCall)
+						} else {
+							code.Add(setCall)
+						}
+					}
+				} else {
+					for _, f := range m.Fields() {
+						if f.OneOfOption == nil {
+							code.
+								Id(receiverName).
+								Dot(prototypeFieldName).
+								Dot(f.GoIdentifiers.ExportedField).
+								Op("=").
+								Id("x").
+								Dot(f.GoIdentifiers.ExportedField)
+						}
+					}
+
+					for _, g := range m.OneOfGroups() {
 						code.
 							Id(receiverName).
 							Dot(prototypeFieldName).
-							Dot(f.GoFieldName).
+							Dot(g.GoIdentifiers.ExportedField).
 							Op("=").
 							Id("x").
-							Dot(f.GoFieldName)
+							Dot(g.GoIdentifiers.ExportedField)
 					}
-				}
-
-				for _, g := range m.OneOfGroups() {
-					code.
-						Id(receiverName).
-						Dot(prototypeFieldName).
-						Dot(g.GoFieldName).
-						Op("=").
-						Id("x").
-						Dot(g.GoFieldName)
 				}
 
 				code.

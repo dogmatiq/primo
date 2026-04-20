@@ -6,7 +6,7 @@ import (
 	. "github.com/dogmatiq/primo/internal/test/exhaustiveswitch"
 )
 
-func TestOneOfSwitch(t *testing.T) {
+func TestOneOfSwitch_open(t *testing.T) {
 	t.Parallel()
 
 	t.Run(

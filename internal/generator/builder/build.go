@@ -33,37 +33,66 @@ func generateBuildMethod(code *jen.File, m *scope.Message) {
 				Op("*").
 				Id(m.GoTypeName),
 		).
-		Block(
-			jen.
-				Return().
-				Op("&").
-				Id(m.GoTypeName).
-				ValuesFunc(
-					func(code *jen.Group) {
-						for _, f := range m.Fields() {
-							if f.OneOfOption == nil {
-								code.
-									Line().
-									Id(f.GoFieldName).
-									Op(":").
-									Id(receiverName).
-									Dot(prototypeFieldName).
-									Dot(f.GoFieldName)
-							}
-						}
+		BlockFunc(
+			func(code *jen.Group) {
+				if m.File.IsOpaqueAPI() {
+					code.
+						Id("m").
+						Op(":=").
+						Op("&").
+						Id(m.GoTypeName).
+						Values()
 
-						for _, g := range m.OneOfGroups() {
+					for _, f := range m.Fields() {
+						setCall := jen.
+							Id("m").
+							Dot(f.GoIdentifiers.SetMethod).
+							Call(
+								jen.Id(receiverName).Dot(prototypeFieldName).Dot(f.GoIdentifiers.GetMethod).Call(),
+							)
+						if f.GoIdentifiers.HasMethod != "" {
 							code.
-								Line().
-								Id(g.GoFieldName).
-								Op(":").
-								Id(receiverName).
-								Dot(prototypeFieldName).
-								Dot(g.GoFieldName)
+								If(jen.Id(receiverName).Dot(prototypeFieldName).Dot(f.GoIdentifiers.HasMethod).Call()).
+								Block(setCall)
+						} else {
+							code.Add(setCall)
 						}
+					}
 
-						code.Line()
-					},
-				),
+					code.Return(jen.Id("m"))
+				} else {
+					code.
+						Return().
+						Op("&").
+						Id(m.GoTypeName).
+						ValuesFunc(
+							func(code *jen.Group) {
+								for _, f := range m.Fields() {
+									if f.OneOfOption == nil {
+										code.
+											Line().
+											Id(f.GoIdentifiers.ExportedField).
+											Op(":").
+											Id(receiverName).
+											Dot(prototypeFieldName).
+											Dot(f.GoIdentifiers.ExportedField)
+									}
+								}
+
+								for _, g := range m.OneOfGroups() {
+									code.
+										Line().
+										Id(g.GoIdentifiers.ExportedField).
+										Op(":").
+										Id(receiverName).
+										Dot(prototypeFieldName).
+										Dot(g.GoIdentifiers.ExportedField)
+								}
+
+								code.Line()
+							},
+						)
+				}
+			},
 		)
 }

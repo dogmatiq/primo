@@ -1,0 +1,22 @@
+edition = "2024";
+
+package primo.test.exhaustiveswitch;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/exhaustiveswitch";
+
+enum OpaqueDirection {
+  OPAQUE_DIRECTION_UNSPECIFIED = 0;
+  OPAQUE_DIRECTION_LEFT = 1;
+  OPAQUE_DIRECTION_RIGHT = 2;
+}
+
+message OpaqueRecord {
+  oneof operation {
+    int32 increment = 1;
+    int32 decrement = 2;
+    string log = 3;
+    NamingCollision naming_collision = 4;
+  }
+
+  message NamingCollision {}
+}

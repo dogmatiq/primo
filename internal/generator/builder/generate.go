@@ -6,6 +6,11 @@ import (
 )
 
 // Generate generates builders for each message type.
+//
+// For open API files, primo generates WithXxx/From/Build using direct struct
+// field access. For opaque API files, the same interface is generated using
+// the SetXxx/HasXxx/GetXxx methods that protoc-gen-go provides, since the
+// underlying xxx_hidden_* fields are inaccessible.
 func Generate(code *jen.File, f *scope.File) error {
 	for _, m := range f.Messages() {
 		generateType(code, m)
