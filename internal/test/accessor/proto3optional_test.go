@@ -6,12 +6,12 @@ import (
 	. "github.com/dogmatiq/primo/internal/test/accessor"
 )
 
-// TestOneofAccessor_proto3optional verifies that a real oneof declared
+// TestOneOfAccessor_proto3optional verifies that a real oneof declared
 // alongside proto3 optional fields still generates TryGetXxx accessor methods.
-func TestOneofAccessor_proto3optional(t *testing.T) {
+func TestOneOfAccessor_proto3optional(t *testing.T) {
 	t.Parallel()
 
-	t.Run("when the oneof value is set", func(t *testing.T) {
+	t.Run("when the one-of value is set", func(t *testing.T) {
 		t.Run("it returns the value with ok set to true", func(t *testing.T) {
 			m := &Proto3OptionalMessage{}
 			m.SetChoiceA("<value>")
@@ -27,7 +27,7 @@ func TestOneofAccessor_proto3optional(t *testing.T) {
 		})
 	})
 
-	t.Run("when a different oneof option is set", func(t *testing.T) {
+	t.Run("when the one-of value is set to some other option", func(t *testing.T) {
 		t.Run("it returns with ok set to false", func(t *testing.T) {
 			m := &Proto3OptionalMessage{}
 			m.SetChoiceB(123)

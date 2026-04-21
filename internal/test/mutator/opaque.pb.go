@@ -136,14 +136,14 @@ var File_github_com_dogmatiq_primo_internal_test_mutator_opaque_proto protorefle
 
 const file_github_com_dogmatiq_primo_internal_test_mutator_opaque_proto_rawDesc = "" +
 	"\n" +
-	"<github.com/dogmatiq/primo/internal/test/mutator/opaque.proto\x12\x13primo.test.mutators\"3\n" +
+	"<github.com/dogmatiq/primo/internal/test/mutator/opaque.proto\x12\x12primo.test.mutator\"3\n" +
 	"\rOpaqueMessage\x12\x10\n" +
 	"\x03num\x18\x01 \x01(\x05R\x03num\x12\x10\n" +
 	"\x03str\x18\x02 \x01(\tR\x03strB1Z/github.com/dogmatiq/primo/internal/test/mutatorb\beditionsp\xe9\a"
 
 var file_github_com_dogmatiq_primo_internal_test_mutator_opaque_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_github_com_dogmatiq_primo_internal_test_mutator_opaque_proto_goTypes = []any{
-	(*OpaqueMessage)(nil), // 0: primo.test.mutators.OpaqueMessage
+	(*OpaqueMessage)(nil), // 0: primo.test.mutator.OpaqueMessage
 }
 var file_github_com_dogmatiq_primo_internal_test_mutator_opaque_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type

@@ -6,12 +6,13 @@ import (
 	. "github.com/dogmatiq/primo/internal/test/exhaustiveswitch"
 )
 
-// TestOneofSwitch_proto3optional verifies that a real oneof declared alongside
+// TestOneOfSwitch_proto3optional verifies that a real oneof declared alongside
 // proto3 optional fields still generates Switch_/Map_ functions.
-func TestOneofSwitch_proto3optional(t *testing.T) {
+func TestOneOfSwitch_proto3optional(t *testing.T) {
 	t.Parallel()
 
-	t.Run("it calls the function for the populated oneof option", func(t *testing.T) {
+	t.Run("it calls the function for the populated one-of option", func(t *testing.T) {
+		t.Parallel()
 		m := &Proto3OptionalMessage{}
 		m.SetChoiceA("<value>")
 
@@ -27,7 +28,8 @@ func TestOneofSwitch_proto3optional(t *testing.T) {
 		}
 	})
 
-	t.Run("it calls none() when choice is unset", func(t *testing.T) {
+	t.Run("it calls the 'none' function if the one-of field is unset", func(t *testing.T) {
+		t.Parallel()
 		m := &Proto3OptionalMessage{}
 
 		called := false
