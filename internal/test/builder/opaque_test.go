@@ -20,6 +20,8 @@ func TestBuilder_opaque(t *testing.T) {
 		WithFieldA(123).
 		WithFieldC(456).
 		WithFieldE(101).
+		WithFieldF([]int32{1, 2, 3}).
+		WithFieldG(map[string]int32{"a": 1}).
 		WithNested(
 			NewOpaqueMessage_NestedBuilder().
 				WithField(789).
@@ -31,6 +33,8 @@ func TestBuilder_opaque(t *testing.T) {
 	want.SetFieldB("abc")
 	want.SetFieldC(456)
 	want.SetFieldE(101)
+	want.SetFieldF([]int32{1, 2, 3})
+	want.SetFieldG(map[string]int32{"a": 1})
 	nested := &OpaqueMessage_Nested{}
 	nested.SetField(789)
 	want.SetNested(nested)

@@ -70,6 +70,13 @@ func (f *Field) hasExplicitPresence() bool {
 		return false
 	}
 
+	// Repeated and map fields (maps are repeated message fields in the
+	// descriptor) never have explicit presence. protoc-gen-go does not generate
+	// HasXxx methods for them.
+	if f.Descriptor.GetLabel() == descriptorpb.FieldDescriptorProto_LABEL_REPEATED {
+		return false
+	}
+
 	// In editions 2023 and later the default field presence is EXPLICIT, so all
 	// singular non-map non-repeated fields are pointer types unless overridden.
 	fileFd := f.Message.File.Descriptor

@@ -13,7 +13,7 @@ import (
 // compile error. Passing this test confirms no such code was generated.
 //
 // The SetXxx mutators provided by protoc-gen-go itself remain available.
-func TestMutatorSkipped(t *testing.T) {
+func TestOpaqueMutatorSkipped(t *testing.T) {
 	t.Parallel()
 
 	m := &OpaqueMessage{}

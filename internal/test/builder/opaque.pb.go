@@ -29,6 +29,8 @@ type OpaqueMessage struct {
 	xxx_hidden_Group       isOpaqueMessage_Group  `protobuf_oneof:"group"`
 	xxx_hidden_Nested      *OpaqueMessage_Nested  `protobuf:"bytes,5,opt,name=nested"`
 	xxx_hidden_FieldE      int32                  `protobuf:"varint,6,opt,name=field_e,json=fieldE"`
+	xxx_hidden_FieldF      []int32                `protobuf:"varint,7,rep,packed,name=field_f,json=fieldF"`
+	xxx_hidden_FieldG      map[string]int32       `protobuf:"bytes,8,rep,name=field_g,json=fieldG" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
 	XXX_raceDetectHookData protoimpl.RaceDetectHookData
 	XXX_presence           [1]uint32
 	unknownFields          protoimpl.UnknownFields
@@ -109,14 +111,28 @@ func (x *OpaqueMessage) GetFieldE() int32 {
 	return 0
 }
 
+func (x *OpaqueMessage) GetFieldF() []int32 {
+	if x != nil {
+		return x.xxx_hidden_FieldF
+	}
+	return nil
+}
+
+func (x *OpaqueMessage) GetFieldG() map[string]int32 {
+	if x != nil {
+		return x.xxx_hidden_FieldG
+	}
+	return nil
+}
+
 func (x *OpaqueMessage) SetFieldA(v int32) {
 	x.xxx_hidden_FieldA = v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 0, 7)
 }
 
 func (x *OpaqueMessage) SetFieldB(v string) {
 	x.xxx_hidden_FieldB = &v
-	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 5)
+	protoimpl.X.SetPresent(&(x.XXX_presence[0]), 1, 7)
 }
 
 func (x *OpaqueMessage) SetFieldC(v int32) {
@@ -133,6 +149,14 @@ func (x *OpaqueMessage) SetNested(v *OpaqueMessage_Nested) {
 
 func (x *OpaqueMessage) SetFieldE(v int32) {
 	x.xxx_hidden_FieldE = v
+}
+
+func (x *OpaqueMessage) SetFieldF(v []int32) {
+	x.xxx_hidden_FieldF = v
+}
+
+func (x *OpaqueMessage) SetFieldG(v map[string]int32) {
+	x.xxx_hidden_FieldG = v
 }
 
 func (x *OpaqueMessage) HasFieldA() bool {
@@ -240,6 +264,8 @@ type OpaqueMessage_builder struct {
 	// field_e uses implicit presence, so its Go type is int32 (not *int32)
 	// even though the file-level default is EXPLICIT.
 	FieldE int32
+	FieldF []int32
+	FieldG map[string]int32
 }
 
 func (b0 OpaqueMessage_builder) Build() *OpaqueMessage {
@@ -247,11 +273,11 @@ func (b0 OpaqueMessage_builder) Build() *OpaqueMessage {
 	b, x := &b0, m0
 	_, _ = b, x
 	if b.FieldA != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 0, 7)
 		x.xxx_hidden_FieldA = *b.FieldA
 	}
 	if b.FieldB != nil {
-		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 5)
+		protoimpl.X.SetPresentNonAtomic(&(x.XXX_presence[0]), 1, 7)
 		x.xxx_hidden_FieldB = b.FieldB
 	}
 	if b.FieldC != nil {
@@ -262,6 +288,8 @@ func (b0 OpaqueMessage_builder) Build() *OpaqueMessage {
 	}
 	x.xxx_hidden_Nested = b.Nested
 	x.xxx_hidden_FieldE = b.FieldE
+	x.xxx_hidden_FieldF = b.FieldF
+	x.xxx_hidden_FieldG = b.FieldG
 	return m0
 }
 
@@ -370,30 +398,37 @@ var File_github_com_dogmatiq_primo_internal_test_builder_opaque_proto protorefle
 
 const file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_rawDesc = "" +
 	"\n" +
-	"<github.com/dogmatiq/primo/internal/test/builder/opaque.proto\x12\x12primo.test.builder\"\x82\x02\n" +
+	"<github.com/dogmatiq/primo/internal/test/builder/opaque.proto\x12\x12primo.test.builder\"\x9e\x03\n" +
 	"\rOpaqueMessage\x12\x17\n" +
 	"\afield_a\x18\x01 \x01(\x05R\x06fieldA\x12\x17\n" +
 	"\afield_b\x18\x02 \x01(\tR\x06fieldB\x12\x19\n" +
 	"\afield_c\x18\x03 \x01(\x05H\x00R\x06fieldC\x12\x19\n" +
 	"\afield_d\x18\x04 \x01(\x05H\x00R\x06fieldD\x12@\n" +
 	"\x06nested\x18\x05 \x01(\v2(.primo.test.builder.OpaqueMessage.NestedR\x06nested\x12\x1e\n" +
-	"\afield_e\x18\x06 \x01(\x05B\x05\xaa\x01\x02\b\x02R\x06fieldE\x1a\x1e\n" +
+	"\afield_e\x18\x06 \x01(\x05B\x05\xaa\x01\x02\b\x02R\x06fieldE\x12\x17\n" +
+	"\afield_f\x18\a \x03(\x05R\x06fieldF\x12F\n" +
+	"\afield_g\x18\b \x03(\v2-.primo.test.builder.OpaqueMessage.FieldGEntryR\x06fieldG\x1a\x1e\n" +
 	"\x06Nested\x12\x14\n" +
-	"\x05field\x18\x01 \x01(\x05R\x05fieldB\a\n" +
+	"\x05field\x18\x01 \x01(\x05R\x05field\x1a9\n" +
+	"\vFieldGEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x01B\a\n" +
 	"\x05groupB1Z/github.com/dogmatiq/primo/internal/test/builderb\beditionsp\xe9\a"
 
-var file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_goTypes = []any{
 	(*OpaqueMessage)(nil),        // 0: primo.test.builder.OpaqueMessage
 	(*OpaqueMessage_Nested)(nil), // 1: primo.test.builder.OpaqueMessage.Nested
+	nil,                          // 2: primo.test.builder.OpaqueMessage.FieldGEntry
 }
 var file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_depIdxs = []int32{
 	1, // 0: primo.test.builder.OpaqueMessage.nested:type_name -> primo.test.builder.OpaqueMessage.Nested
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 1: primo.test.builder.OpaqueMessage.field_g:type_name -> primo.test.builder.OpaqueMessage.FieldGEntry
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_init() }
@@ -411,7 +446,7 @@ func file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_rawDesc), len(file_github_com_dogmatiq_primo_internal_test_builder_opaque_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

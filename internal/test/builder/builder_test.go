@@ -20,6 +20,8 @@ func TestBuilder(t *testing.T) {
 		From(prototype).
 		WithFieldA(123).
 		WithFieldC(456).
+		WithFieldE([]int32{1, 2, 3}).
+		WithFieldF(map[string]int32{"a": 1}).
 		WithNested(
 			NewMessage_NestedBuilder().
 				WithField(789).
@@ -32,6 +34,8 @@ func TestBuilder(t *testing.T) {
 		Group: &Message_FieldC{
 			FieldC: 456,
 		},
+		FieldE: []int32{1, 2, 3},
+		FieldF: map[string]int32{"a": 1},
 		Nested: &Message_Nested{
 			Field: 789,
 		},

@@ -21,4 +21,7 @@ message OpaqueMessage {
   // field_e uses implicit presence, so its Go type is int32 (not *int32)
   // even though the file-level default is EXPLICIT.
   int32 field_e = 6 [features.field_presence = IMPLICIT];
+
+  repeated int32 field_f = 7;
+  map<string, int32> field_g = 8;
 }
