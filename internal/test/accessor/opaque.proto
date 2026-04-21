@@ -1,6 +1,6 @@
 edition = "2024";
 
-package primo.test.mutators;
+package primo.test.accessor;
 
 option go_package = "github.com/dogmatiq/primo/internal/test/accessor";
 
