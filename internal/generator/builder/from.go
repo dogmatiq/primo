@@ -47,6 +47,10 @@ func generateFromMethod(code *jen.File, m *scope.Message) {
 		BlockFunc(
 			func(code *jen.Group) {
 				if m.File.IsOpaqueAPI() {
+					code.Qual("google.golang.org/protobuf/proto", "Reset").
+						Call(
+							jen.Op("&").Id(receiverName).Dot(prototypeFieldName),
+						)
 					for _, f := range m.Fields() {
 						setCall := jen.
 							Id(receiverName).

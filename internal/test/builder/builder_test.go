@@ -11,57 +11,51 @@ import (
 func TestBuilder(t *testing.T) {
 	t.Parallel()
 
-	prototype := &Message{
-		FieldA: 789,
-		FieldB: "abc",
-	}
+	testBuilderSuite[*Message, *MessageBuilder](t, NewMessageBuilder)
 
-	builder := NewMessageBuilder().
-		From(prototype).
-		WithFieldA(123).
-		WithFieldC(456).
-		WithFieldE([]int32{1, 2, 3}).
-		WithFieldF(map[string]int32{"a": 1}).
-		WithNested(
-			NewMessage_NestedBuilder().
-				WithField(789).
-				Build(),
-		)
+	t.Run("when built from a prototype with field overrides", func(t *testing.T) {
+		t.Run("it returns the expected message on every Build call", func(t *testing.T) {
+			t.Parallel()
 
-	want := &Message{
-		FieldA: 123,
-		FieldB: "abc",
-		Group: &Message_FieldC{
-			FieldC: 456,
-		},
-		FieldE: []int32{1, 2, 3},
-		FieldF: map[string]int32{"a": 1},
-		Nested: &Message_Nested{
-			Field: 789,
-		},
-	}
+			prototype := &Message{
+				FieldA: 789,
+				FieldB: "abc",
+			}
 
-	gotFirst := builder.Build()
+			builder := NewMessageBuilder().
+				From(prototype).
+				WithFieldA(123).
+				WithFieldC(456).
+				WithFieldE([]int32{1, 2, 3}).
+				WithFieldF(map[string]int32{"a": 1}).
+				WithNested(
+					NewMessage_NestedBuilder().
+						WithField(789).
+						Build(),
+				)
 
-	if diff := cmp.Diff(
-		want,
-		gotFirst,
-		protocmp.Transform(),
-	); diff != "" {
-		t.Fatalf("unexpected result (+got, -want):\n%s", diff)
-	}
+			want := &Message{
+				FieldA: 123,
+				FieldB: "abc",
+				Group: &Message_FieldC{
+					FieldC: 456,
+				},
+				FieldE: []int32{1, 2, 3},
+				FieldF: map[string]int32{"a": 1},
+				Nested: &Message_Nested{
+					Field: 789,
+				},
+			}
 
-	gotSecond := builder.Build()
-
-	if gotSecond == gotFirst {
-		t.Fatal("Build() returned the same message multiple times")
-	}
-
-	if diff := cmp.Diff(
-		want,
-		gotSecond,
-		protocmp.Transform(),
-	); diff != "" {
-		t.Fatalf("unexpected result (+got, -want):\n%s", diff)
-	}
+			for i := range 2 {
+				if diff := cmp.Diff(
+					want,
+					builder.Build(),
+					protocmp.Transform(),
+				); diff != "" {
+					t.Fatalf("Build() call %d: unexpected result (-want +got):\n%s", i+1, diff)
+				}
+			}
+		})
+	})
 }
