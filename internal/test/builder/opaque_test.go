@@ -11,7 +11,33 @@ import (
 func TestBuilder_opaque(t *testing.T) {
 	t.Parallel()
 
-	testBuilderSuite[*OpaqueMessage, *OpaqueMessageBuilder](t, NewOpaqueMessageBuilder)
+	t.Run("func Build()", func(t *testing.T) {
+		t.Run("it returns a new message each call", func(t *testing.T) {
+			t.Parallel()
+			b := NewOpaqueMessageBuilder()
+			first, second := b.Build(), b.Build()
+			if first == second {
+				t.Fatal("Build() returned the same pointer on consecutive calls")
+			}
+		})
+	})
+
+	t.Run("func From()", func(t *testing.T) {
+		t.Run("it clears stale values from the previous prototype", func(t *testing.T) {
+			t.Parallel()
+			b := NewOpaqueMessageBuilder()
+			b.WithFieldA(123)
+			b.WithFieldB("abc")
+			b.From(&OpaqueMessage{})
+			if diff := cmp.Diff(
+				&OpaqueMessage{},
+				b.Build(),
+				protocmp.Transform(),
+			); diff != "" {
+				t.Fatalf("unexpected result (-want +got):\n%s", diff)
+			}
+		})
+	})
 
 	t.Run("when built from a prototype with field overrides", func(t *testing.T) {
 		t.Run("it returns the expected message on every Build call", func(t *testing.T) {

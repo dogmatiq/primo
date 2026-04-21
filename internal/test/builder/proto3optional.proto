@@ -1,0 +1,25 @@
+syntax = "proto3";
+package primo.test.builder;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/builder";
+
+enum Proto3OptionalStatus {
+  PROTO3_OPTIONAL_STATUS_UNSPECIFIED = 0;
+  PROTO3_OPTIONAL_STATUS_OK = 1;
+  PROTO3_OPTIONAL_STATUS_ERR = 2;
+}
+
+// Proto3OptionalMessage contains a mix of proto3 optional fields and a real
+// oneof, to verify that optional fields use pointer-typed WithXxx methods in
+// the generated builder.
+message Proto3OptionalMessage {
+  optional int32 num = 1;
+  optional string str = 2;
+  optional bool flag = 3;
+  optional Proto3OptionalStatus status = 4;
+
+  oneof choice {
+    string choice_a = 5;
+    int32 choice_b = 6;
+  }
+}

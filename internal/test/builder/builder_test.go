@@ -11,7 +11,33 @@ import (
 func TestBuilder(t *testing.T) {
 	t.Parallel()
 
-	testBuilderSuite[*Message, *MessageBuilder](t, NewMessageBuilder)
+	t.Run("func Build()", func(t *testing.T) {
+		t.Run("it returns a new message each call", func(t *testing.T) {
+			t.Parallel()
+			b := NewMessageBuilder()
+			first, second := b.Build(), b.Build()
+			if first == second {
+				t.Fatal("Build() returned the same pointer on consecutive calls")
+			}
+		})
+	})
+
+	t.Run("func From()", func(t *testing.T) {
+		t.Run("it clears stale values from the previous prototype", func(t *testing.T) {
+			t.Parallel()
+			b := NewMessageBuilder()
+			b.WithFieldA(123)
+			b.WithFieldB("abc")
+			b.From(&Message{})
+			if diff := cmp.Diff(
+				&Message{},
+				b.Build(),
+				protocmp.Transform(),
+			); diff != "" {
+				t.Fatalf("unexpected result (-want +got):\n%s", diff)
+			}
+		})
+	})
 
 	t.Run("when built from a prototype with field overrides", func(t *testing.T) {
 		t.Run("it returns the expected message on every Build call", func(t *testing.T) {
