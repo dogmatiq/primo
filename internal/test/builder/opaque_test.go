@@ -8,13 +8,13 @@ import (
 	"google.golang.org/protobuf/testing/protocmp"
 )
 
-func TestBuilder(t *testing.T) {
+func TestBuilder_opaque(t *testing.T) {
 	t.Parallel()
 
 	t.Run("func Build()", func(t *testing.T) {
 		t.Run("it returns a new message each call", func(t *testing.T) {
 			t.Parallel()
-			b := NewMessageBuilder()
+			b := NewOpaqueMessageBuilder()
 			first, second := b.Build(), b.Build()
 			if first == second {
 				t.Fatal("Build() returned the same pointer on consecutive calls")
@@ -25,12 +25,12 @@ func TestBuilder(t *testing.T) {
 	t.Run("func From()", func(t *testing.T) {
 		t.Run("it clears stale values from the previous prototype", func(t *testing.T) {
 			t.Parallel()
-			b := NewMessageBuilder()
+			b := NewOpaqueMessageBuilder()
 			b.WithFieldA(123)
 			b.WithFieldB("abc")
-			b.From(&Message{})
+			b.From(&OpaqueMessage{})
 			if diff := cmp.Diff(
-				&Message{},
+				&OpaqueMessage{},
 				b.Build(),
 				protocmp.Transform(),
 			); diff != "" {
@@ -43,35 +43,33 @@ func TestBuilder(t *testing.T) {
 		t.Run("it returns the expected message on every Build call", func(t *testing.T) {
 			t.Parallel()
 
-			prototype := &Message{
-				FieldA: 789,
-				FieldB: "abc",
-			}
+			prototype := &OpaqueMessage{}
+			prototype.SetFieldA(789)
+			prototype.SetFieldB("abc")
 
-			builder := NewMessageBuilder().
+			builder := NewOpaqueMessageBuilder().
 				From(prototype).
 				WithFieldA(123).
 				WithFieldC(456).
-				WithFieldE([]int32{1, 2, 3}).
-				WithFieldF(map[string]int32{"a": 1}).
+				WithFieldE(101).
+				WithFieldF([]int32{1, 2, 3}).
+				WithFieldG(map[string]int32{"a": 1}).
 				WithNested(
-					NewMessage_NestedBuilder().
+					NewOpaqueMessage_NestedBuilder().
 						WithField(789).
 						Build(),
 				)
 
-			want := &Message{
-				FieldA: 123,
-				FieldB: "abc",
-				Group: &Message_FieldC{
-					FieldC: 456,
-				},
-				FieldE: []int32{1, 2, 3},
-				FieldF: map[string]int32{"a": 1},
-				Nested: &Message_Nested{
-					Field: 789,
-				},
-			}
+			want := &OpaqueMessage{}
+			want.SetFieldA(123)
+			want.SetFieldB("abc")
+			want.SetFieldC(456)
+			want.SetFieldE(101)
+			want.SetFieldF([]int32{1, 2, 3})
+			want.SetFieldG(map[string]int32{"a": 1})
+			nested := &OpaqueMessage_Nested{}
+			nested.SetField(789)
+			want.SetNested(nested)
 
 			for i := range 2 {
 				if diff := cmp.Diff(

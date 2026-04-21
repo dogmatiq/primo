@@ -14,4 +14,7 @@ message Message {
 
   message Nested { int32 field = 1; }
   Nested nested = 5;
+
+  repeated int32 field_e = 6;
+  map<string, int32> field_f = 7;
 }

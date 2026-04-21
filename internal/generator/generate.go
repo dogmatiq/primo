@@ -29,8 +29,11 @@ func Generate(
 ) *pluginpb.CodeGeneratorResponse {
 	res := &pluginpb.CodeGeneratorResponse{
 		SupportedFeatures: proto.Uint64(uint64(
-			pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL,
+			pluginpb.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL |
+				pluginpb.CodeGeneratorResponse_FEATURE_SUPPORTS_EDITIONS,
 		)),
+		MinimumEdition: proto.Int32(int32(descriptorpb.Edition_EDITION_PROTO3)),
+		MaximumEdition: proto.Int32(int32(descriptorpb.Edition_EDITION_2024)),
 	}
 
 	if err := generate(

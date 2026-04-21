@@ -6,7 +6,14 @@ import (
 )
 
 // Generate generates mutator methods for each field in each message.
+//
+// Opaque API files are skipped; protoc-gen-go already generates SetXxx
+// methods for them.
 func Generate(code *jen.File, f *scope.File) error {
+	if f.IsOpaqueAPI() {
+		return nil
+	}
+
 	for _, m := range f.Messages() {
 		for _, f := range m.Fields() {
 			if f.OneOfOption == nil {

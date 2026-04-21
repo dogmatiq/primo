@@ -29,8 +29,10 @@ type Message struct {
 	//
 	//	*Message_FieldC
 	//	*Message_FieldD
-	Group         isMessage_Group `protobuf_oneof:"group"`
-	Nested        *Message_Nested `protobuf:"bytes,5,opt,name=nested,proto3" json:"nested,omitempty"`
+	Group         isMessage_Group  `protobuf_oneof:"group"`
+	Nested        *Message_Nested  `protobuf:"bytes,5,opt,name=nested,proto3" json:"nested,omitempty"`
+	FieldE        []int32          `protobuf:"varint,6,rep,packed,name=field_e,json=fieldE,proto3" json:"field_e,omitempty"`
+	FieldF        map[string]int32 `protobuf:"bytes,7,rep,name=field_f,json=fieldF,proto3" json:"field_f,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,6 +113,20 @@ func (x *Message) GetNested() *Message_Nested {
 	return nil
 }
 
+func (x *Message) GetFieldE() []int32 {
+	if x != nil {
+		return x.FieldE
+	}
+	return nil
+}
+
+func (x *Message) GetFieldF() map[string]int32 {
+	if x != nil {
+		return x.FieldF
+	}
+	return nil
+}
+
 type isMessage_Group interface {
 	isMessage_Group()
 }
@@ -175,15 +191,20 @@ var File_github_com_dogmatiq_primo_internal_test_builder_builder_proto protorefl
 
 const file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_rawDesc = "" +
 	"\n" +
-	"=github.com/dogmatiq/primo/internal/test/builder/builder.proto\x12\x12primo.test.builder\"\xd6\x01\n" +
+	"=github.com/dogmatiq/primo/internal/test/builder/builder.proto\x12\x12primo.test.builder\"\xec\x02\n" +
 	"\aMessage\x12\x17\n" +
 	"\afield_a\x18\x01 \x01(\x05R\x06fieldA\x12\x17\n" +
 	"\afield_b\x18\x02 \x01(\tR\x06fieldB\x12\x19\n" +
 	"\afield_c\x18\x03 \x01(\x05H\x00R\x06fieldC\x12\x19\n" +
 	"\afield_d\x18\x04 \x01(\x05H\x00R\x06fieldD\x12:\n" +
-	"\x06nested\x18\x05 \x01(\v2\".primo.test.builder.Message.NestedR\x06nested\x1a\x1e\n" +
+	"\x06nested\x18\x05 \x01(\v2\".primo.test.builder.Message.NestedR\x06nested\x12\x17\n" +
+	"\afield_e\x18\x06 \x03(\x05R\x06fieldE\x12@\n" +
+	"\afield_f\x18\a \x03(\v2'.primo.test.builder.Message.FieldFEntryR\x06fieldF\x1a\x1e\n" +
 	"\x06Nested\x12\x14\n" +
-	"\x05field\x18\x01 \x01(\x05R\x05fieldB\a\n" +
+	"\x05field\x18\x01 \x01(\x05R\x05field\x1a9\n" +
+	"\vFieldFEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x01B\a\n" +
 	"\x05groupB1Z/github.com/dogmatiq/primo/internal/test/builderb\x06proto3"
 
 var (
@@ -198,18 +219,20 @@ func file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_rawDescG
 	return file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_rawDescData
 }
 
-var file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_goTypes = []any{
 	(*Message)(nil),        // 0: primo.test.builder.Message
 	(*Message_Nested)(nil), // 1: primo.test.builder.Message.Nested
+	nil,                    // 2: primo.test.builder.Message.FieldFEntry
 }
 var file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_depIdxs = []int32{
 	1, // 0: primo.test.builder.Message.nested:type_name -> primo.test.builder.Message.Nested
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 1: primo.test.builder.Message.field_f:type_name -> primo.test.builder.Message.FieldFEntry
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_init() }
@@ -227,7 +250,7 @@ func file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_rawDesc), len(file_github_com_dogmatiq_primo_internal_test_builder_builder_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

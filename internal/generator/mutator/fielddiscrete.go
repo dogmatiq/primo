@@ -8,13 +8,13 @@ import (
 // generateForDiscreteField generates a mutator method for a "discrete" field,
 // that is, a field that is not part of a one-of group.
 func generateForDiscreteField(code *jen.File, f *scope.Field) {
-	methodName := "Set" + f.GoFieldName
+	methodName := "Set" + f.GoIdentifiers.Base
 
 	code.
 		Commentf(
 			"%s sets the x.%s field to v, then returns x.",
 			methodName,
-			f.GoFieldName,
+			f.GoIdentifiers.Base,
 		)
 
 	code.
@@ -35,7 +35,7 @@ func generateForDiscreteField(code *jen.File, f *scope.Field) {
 		Block(
 			jen.
 				Id("x").
-				Dot(f.GoFieldName).
+				Dot(f.GoIdentifiers.ExportedField).
 				Op("=").
 				Id("v"),
 		)

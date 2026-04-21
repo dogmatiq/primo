@@ -9,20 +9,34 @@ import (
 // option in a one-of group.
 func generateForOneOfOption(code *jen.File, f *scope.Field) {
 	typeName := builderTypeName(f.Message)
-	methodName := "With" + f.OneOfOption.DiscriminatorFieldName
+	methodName := "With" + f.OneOfOption.GoIdentifiers.Base
 
-	code.
-		Commentf(
-			"%s configures the builder to set the %s field to a",
-			methodName,
-			f.OneOfOption.Group.GoFieldName,
-		)
-	code.
-		Commentf(
-			"[%s] value containing v, then returns %s",
-			f.OneOfOption.DiscriminatorTypeName,
-			receiverName,
-		)
+	if f.Message.File.IsOpaqueAPI() {
+		code.
+			Commentf(
+				"%s configures the builder to set the %s field to v,",
+				methodName,
+				f.OneOfOption.GoIdentifiers.Base,
+			)
+		code.
+			Commentf(
+				"then returns %s.",
+				receiverName,
+			)
+	} else {
+		code.
+			Commentf(
+				"%s configures the builder to set the %s field to a",
+				methodName,
+				f.OneOfOption.Group.GoIdentifiers.Base,
+			)
+		code.
+			Commentf(
+				"[%s] value containing v, then returns %s",
+				f.OneOfOption.GoIdentifiers.DiscriminatorType,
+				receiverName,
+			)
+	}
 
 	code.
 		Func().
@@ -43,19 +57,29 @@ func generateForOneOfOption(code *jen.File, f *scope.Field) {
 				Op("*").
 				Id(typeName),
 		).
-		Block(
-			jen.
-				Id(receiverName).
-				Dot(prototypeFieldName).
-				Dot(f.GoFieldName).
-				Op("=").
-				Op("&").
-				Id(f.OneOfOption.DiscriminatorTypeName).
-				Values(
-					jen.Id(f.OneOfOption.DiscriminatorFieldName).Op(":").Id("v"),
-				),
-			jen.
-				Return().
-				Id(receiverName),
+		BlockFunc(
+			func(code *jen.Group) {
+				if f.Message.File.IsOpaqueAPI() {
+					code.
+						Id(receiverName).
+						Dot(prototypeFieldName).
+						Dot(f.GoIdentifiers.SetMethod).
+						Call(jen.Id("v"))
+				} else {
+					code.
+						Id(receiverName).
+						Dot(prototypeFieldName).
+						Dot(f.GoIdentifiers.ExportedField).
+						Op("=").
+						Op("&").
+						Id(f.OneOfOption.GoIdentifiers.DiscriminatorType).
+						Values(
+							jen.Id(f.OneOfOption.GoIdentifiers.Base).Op(":").Id("v"),
+						)
+				}
+				code.
+					Return().
+					Id(receiverName)
+			},
 		)
 }

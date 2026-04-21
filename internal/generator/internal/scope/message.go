@@ -27,26 +27,33 @@ func (m *Message) OneOfGroups() []*OneOfGroup {
 func (m *Message) Fields() []*Field {
 	if m.fields == nil {
 		for _, d := range m.Descriptor.GetOneofDecl() {
-			m.groups = append(
-				m.groups,
-				&OneOfGroup{
-					Message:     m,
-					Descriptor:  d,
-					GoFieldName: identifier.Exported(d.GetName()),
-				},
-			)
+			goFieldName := identifier.Exported(d.GetName())
+			g := &OneOfGroup{
+				Message:    m,
+				Descriptor: d,
+			}
+			g.GoIdentifiers.Base = goFieldName
+			if m.File.IsOpaqueAPI() {
+				g.GoIdentifiers.WhichMethod = "Which" + goFieldName
+			} else {
+				g.GoIdentifiers.ExportedField = goFieldName
+				g.GoIdentifiers.GetMethod = "Get" + goFieldName
+			}
+			m.groups = append(m.groups, g)
 		}
 
 		for _, d := range m.Descriptor.GetField() {
-			f := &Field{
-				Message:     m,
-				Descriptor:  d,
-				GoFieldName: identifier.Exported(d.GetName()),
-			}
+			goFieldName := identifier.Exported(d.GetName())
 
 			if fieldNameCollidesWithMethod(d) {
-				f.GoFieldName += "_"
+				goFieldName += "_"
 			}
+
+			f := &Field{
+				Message:    m,
+				Descriptor: d,
+			}
+			f.GoIdentifiers.Base = goFieldName
 
 			// Proto3 optional fields have a synthetic oneof_decl entry in the
 			// descriptor, but they are not real oneofs. Skip the oneof branch
@@ -55,22 +62,43 @@ func (m *Message) Fields() []*Field {
 			if d.OneofIndex != nil && !d.GetProto3Optional() {
 				group := m.groups[d.GetOneofIndex()]
 
-				fieldName := f.GoFieldName
-				f.GoFieldName = identifier.Exported(group.Descriptor.GetName())
-
-				typeName := m.GoTypeName + "_" + fieldName
+				typeName := m.GoTypeName + "_" + goFieldName
 				if m.File.Request.hasGoType(m.File.GoPackagePath, typeName) {
 					typeName += "_"
 				}
 
 				f.OneOfOption = &OneOfOption{
-					Group:                  group,
-					Field:                  f,
-					DiscriminatorTypeName:  typeName,
-					DiscriminatorFieldName: fieldName,
+					Group: group,
+					Field: f,
+				}
+				f.OneOfOption.GoIdentifiers.Base = goFieldName
+				if m.File.IsOpaqueAPI() {
+					f.OneOfOption.GoIdentifiers.HasMethod = "Has" + goFieldName
+					f.OneOfOption.GoIdentifiers.GetMethod = "Get" + goFieldName
+					f.OneOfOption.GoIdentifiers.CaseConstant = m.GoTypeName + "_" + goFieldName + "_case"
+				} else {
+					f.OneOfOption.GoIdentifiers.DiscriminatorType = typeName
 				}
 
 				group.Options = append(group.Options, f.OneOfOption)
+
+				if m.File.IsOpaqueAPI() {
+					f.GoIdentifiers.HasMethod = "Has" + goFieldName
+					f.GoIdentifiers.GetMethod = "Get" + goFieldName
+					f.GoIdentifiers.SetMethod = "Set" + goFieldName
+				} else {
+					f.GoIdentifiers.ExportedField = group.GoIdentifiers.ExportedField
+				}
+			} else {
+				if m.File.IsOpaqueAPI() {
+					f.GoIdentifiers.GetMethod = "Get" + goFieldName
+					f.GoIdentifiers.SetMethod = "Set" + goFieldName
+					if f.hasExplicitPresence() {
+						f.GoIdentifiers.HasMethod = "Has" + goFieldName
+					}
+				} else {
+					f.GoIdentifiers.ExportedField = goFieldName
+				}
 			}
 
 			m.fields = append(m.fields, f)

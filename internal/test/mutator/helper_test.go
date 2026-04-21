@@ -31,7 +31,33 @@ func testMutator[M message, T comparable](
 	)
 }
 
-// testMutator calls a mutator method and verifies that the corresponding
+// testOptionalMutator calls a proto3 optional field setter (which takes *T)
+// and verifies the corresponding getter returns the expected value.
+func testOptionalMutator[M message, T comparable](
+	t *testing.T,
+	mutate func(M, *T),
+	access func(M) T,
+	want T,
+) {
+	t.Helper()
+
+	var m M
+	m = reflect.New(
+		reflect.TypeOf(m).Elem(),
+	).Interface().(M)
+
+	mutate(m, &want)
+
+	if got := access(m); got != want {
+		t.Fatalf(
+			"mutator did not set the field: got: %v, want: %v",
+			got,
+			want,
+		)
+	}
+}
+
+// testMutatorFunc calls a mutator method and verifies that the corresponding
 // accessor returns the value that was set.
 func testMutatorFunc[M message, T any](
 	t *testing.T,

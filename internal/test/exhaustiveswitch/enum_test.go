@@ -6,7 +6,7 @@ import (
 	. "github.com/dogmatiq/primo/internal/test/exhaustiveswitch"
 )
 
-func TestEnumSwitch(t *testing.T) {
+func TestEnumSwitch_open(t *testing.T) {
 	t.Parallel()
 
 	t.Run(

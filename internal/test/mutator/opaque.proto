@@ -1,0 +1,14 @@
+edition = "2024";
+
+package primo.test.mutator;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/mutator";
+
+// OpaqueMessage is an opaque API message used to verify that the mutator
+// generator is correctly skipped. The opaque struct representation used by
+// protoc-gen-go for editions files makes the SetXxx methods it generates
+// conflict with any SetXxx that primo would produce, so primo skips them.
+message OpaqueMessage {
+  int32 num = 1;
+  string str = 2;
+}

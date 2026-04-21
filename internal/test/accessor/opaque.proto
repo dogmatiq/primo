@@ -1,0 +1,13 @@
+edition = "2024";
+
+package primo.test.accessor;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/accessor";
+
+message OpaqueOneOf {
+  oneof group {
+    int32 field_a = 1;
+    int32 field_b = 2;
+    string field_c = 3;
+  }
+}
