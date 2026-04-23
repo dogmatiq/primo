@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog], and this project adheres to
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 [bc]: https://github.com/dogmatiq/.github/blob/main/VERSIONING.md#changelogs
 
+## [0.4.0] - 2026-04-24
+
+### Added
+
+- Added support for [Protobuf Editions](https://protobuf.dev/editions/overview/).
+- Added support for `optional` fields in `proto3` syntax.
+
 ## [0.3.2] - 2025-10-06
 
 ### Added
@@ -133,6 +140,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.3.0]: https://github.com/dogmatiq/primo/releases/tag/v0.3.0
 [0.3.1]: https://github.com/dogmatiq/primo/releases/tag/v0.3.1
 [0.3.2]: https://github.com/dogmatiq/primo/releases/tag/v0.3.2
+[0.4.0]: https://github.com/dogmatiq/primo/releases/tag/v0.4.0
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD
