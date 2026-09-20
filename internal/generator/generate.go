@@ -9,6 +9,7 @@ import (
 	"github.com/dogmatiq/primo/internal/generator/accessor"
 	"github.com/dogmatiq/primo/internal/generator/builder"
 	"github.com/dogmatiq/primo/internal/generator/exhaustiveswitch"
+	"github.com/dogmatiq/primo/internal/generator/formatting"
 	"github.com/dogmatiq/primo/internal/generator/grpcstub"
 	"github.com/dogmatiq/primo/internal/generator/internal/option"
 	"github.com/dogmatiq/primo/internal/generator/internal/scope"
@@ -43,6 +44,7 @@ func Generate(
 		accessor.Generate,
 		builder.Generate,
 		exhaustiveswitch.Generate,
+		formatting.Generate,
 		grpcstub.Generate,
 		marshaling.Generate,
 		mutator.Generate,
