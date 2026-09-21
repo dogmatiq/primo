@@ -1,0 +1,12 @@
+syntax = "proto3";
+package primo.test.formatting;
+
+option go_package = "github.com/dogmatiq/primo/internal/test/formatting";
+
+// Stringable has a hand-written AsString() method, exercising the %s/%q
+// override in the generated Format() method.
+message Stringable { string value = 1; }
+
+// Plain has no AsString() method, exercising the transparency of the generated
+// Format() method.
+message Plain { string value = 1; }
