@@ -36,6 +36,16 @@ func TestFormat(t *testing.T) {
 		}
 	})
 
+	t.Run("does not call AsString() for a nil receiver", func(t *testing.T) {
+		x := (*Stringable)(nil)
+
+		for _, verb := range []string{"%s", "%q"} {
+			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
+				t.Errorf("%s: got %q, want %q", verb, got, want)
+			}
+		}
+	})
+
 	t.Run("delegates the Stringer verbs to String() when AsString() is absent", func(t *testing.T) {
 		x := &Plain{Value: "hello"}
 

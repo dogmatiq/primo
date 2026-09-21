@@ -24,7 +24,7 @@ func generateFormat(code *jen.File, m *scope.Message) {
 	code.Comment("")
 	code.Comment("For the %s and %q verbs it uses the string returned by x.AsString() if x")
 	code.Comment("provides such a method; otherwise it formats x as though this method were not")
-	code.Comment("defined.")
+	code.Comment("defined. A nil x never calls AsString() and falls through to String().")
 
 	code.
 		Func().
@@ -44,13 +44,19 @@ func generateFormat(code *jen.File, m *scope.Message) {
 				Call(jen.Id("f"), jen.Id("verb")),
 			jen.Line(),
 
-			// When formatting as a string, prefer a caller-provided AsString()
-			// method if the type implements one.
+			// When formatting a non-nil value as a string, prefer a
+			// caller-provided AsString() method if the type implements one. The
+			// nil check guards against AsString() implementations that
+			// dereference the receiver; nil values fall through to String().
 			jen.
 				If(
-					jen.Id("verb").Op("==").LitRune('s').
-						Op("||").
-						Id("verb").Op("==").LitRune('q'),
+					jen.Id("x").Op("!=").Nil().
+						Op("&&").
+						Parens(
+							jen.Id("verb").Op("==").LitRune('s').
+								Op("||").
+								Id("verb").Op("==").LitRune('q'),
+						),
 				).
 				Block(
 					jen.
