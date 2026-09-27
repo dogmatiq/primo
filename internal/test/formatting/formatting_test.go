@@ -46,10 +46,59 @@ func TestFormat(t *testing.T) {
 		}
 	})
 
+	t.Run("uses GoString() for the %#v verb", func(t *testing.T) {
+		x := &Stringable{Value: "hello"}
+
+		if got, want := fmt.Sprintf("%#v", x), x.GoString(); got != want {
+			t.Errorf("%%#v: got %q, want %q", got, want)
+		}
+	})
+
+	t.Run("does not call GoString() for a nil receiver", func(t *testing.T) {
+		x := (*Stringable)(nil)
+
+		got := fmt.Sprintf("%#v", x)
+		want := "(*formatting.Stringable)(nil)"
+		if got != want {
+			t.Errorf("%%#v: got %q, want %q", got, want)
+		}
+	})
+
 	t.Run("delegates the Stringer verbs to String() when AsString() is absent", func(t *testing.T) {
 		x := &Plain{Value: "hello"}
 
 		for _, verb := range []string{"%v", "%+v", "%s", "%x", "%X", "%q"} {
+			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
+				t.Errorf("%s: got %q, want %q", verb, got, want)
+			}
+		}
+	})
+
+	t.Run("delegates the Stringer verbs to String() even when combined with the '#' flag", func(t *testing.T) {
+		x := &Plain{Value: "hello"}
+
+		// The '#' flag only selects Go-syntax mode for the %v verb; for every
+		// other Stringer verb it is passed through to fmt's formatting of the
+		// String() result, so it must not cause Format() to bypass String() in
+		// favor of the default (struct dump) behavior.
+		for _, verb := range []string{"%#s", "%#q", "%#x", "%#X"} {
+			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
+				t.Errorf("%s: got %q, want %q", verb, got, want)
+			}
+		}
+	})
+
+	t.Run("prefers AsString() over String() for %#s and %#q", func(t *testing.T) {
+		x := &Stringable{Value: "hello"}
+
+		// AsString() only overrides the %s and %q verbs, so the '#' flag must
+		// not cause %#x and %#X to also prefer it over String().
+		for _, verb := range []string{"%#s", "%#q"} {
+			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.AsString()); got != want {
+				t.Errorf("%s: got %q, want %q", verb, got, want)
+			}
+		}
+		for _, verb := range []string{"%#x", "%#X"} {
 			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
 				t.Errorf("%s: got %q, want %q", verb, got, want)
 			}

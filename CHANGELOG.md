@@ -11,6 +11,22 @@ The format is based on [Keep a Changelog], and this project adheres to
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 [bc]: https://github.com/dogmatiq/.github/blob/main/VERSIONING.md#changelogs
 
+## [0.4.2] - 2026-09-28
+
+### Added
+
+- The generated `Format()` method now uses the string returned by a `GoString()`
+  method for the `%#v` verb, if the message type provides one, mirroring the
+  existing `AsString()` support for the `%s` and `%q` verbs.
+
+### Fixed
+
+- Fixed a bug in the generated `Format()` method where combining the `#` flag
+  with a verb other than `%v` (such as `%#s` or `%#q`) incorrectly bypassed the
+  `String()`/`AsString()` behavior in favor of the default struct formatting.
+  The `#` flag only selects Go-syntax mode for the `%v` verb; every other verb
+  now delegates correctly regardless of the flag.
+
 ## [0.4.1] - 2026-09-21
 
 ### Added
@@ -154,6 +170,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.3.2]: https://github.com/dogmatiq/primo/releases/tag/v0.3.2
 [0.4.0]: https://github.com/dogmatiq/primo/releases/tag/v0.4.0
 [0.4.1]: https://github.com/dogmatiq/primo/releases/tag/v0.4.1
+[0.4.2]: https://github.com/dogmatiq/primo/releases/tag/v0.4.2
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD
