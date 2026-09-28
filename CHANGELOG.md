@@ -11,6 +11,15 @@ The format is based on [Keep a Changelog], and this project adheres to
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 [bc]: https://github.com/dogmatiq/.github/blob/main/VERSIONING.md#changelogs
 
+## [0.4.3] - 2026-09-28
+
+### Changed
+
+- The generated `Format()` method now calls `AsString()` and `GoString()` even
+  when the receiver is `nil`, since some message types handle a `nil` receiver
+  themselves. If either method panics, `Format()` prints a marker in the same
+  style the `fmt` package uses for a panicking `String()` method.
+
 ## [0.4.2] - 2026-09-28
 
 ### Added
@@ -171,6 +180,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.4.0]: https://github.com/dogmatiq/primo/releases/tag/v0.4.0
 [0.4.1]: https://github.com/dogmatiq/primo/releases/tag/v0.4.1
 [0.4.2]: https://github.com/dogmatiq/primo/releases/tag/v0.4.2
+[0.4.3]: https://github.com/dogmatiq/primo/releases/tag/v0.4.3
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD

@@ -25,8 +25,11 @@ func generateFormat(code *jen.File, m *scope.Message) {
 	code.Comment("For the %s and %q verbs it uses the string returned by x.AsString() if x")
 	code.Comment("provides such a method. For the %#v verb it uses the string returned by")
 	code.Comment("x.GoString() if x provides such a method. Otherwise it formats x as though this")
-	code.Comment("method were not defined. A nil x never calls AsString() or GoString(), falling")
-	code.Comment("through to the default behavior for the verb.")
+	code.Comment("method were not defined.")
+	code.Comment("")
+	code.Comment("AsString() and GoString() are called even when x is nil, since some message")
+	code.Comment("types handle a nil receiver themselves. If either method panics, the panic is")
+	code.Comment("formatted the same way the fmt package formats a panicking String() method.")
 
 	code.
 		Func().
@@ -46,10 +49,8 @@ func generateFormat(code *jen.File, m *scope.Message) {
 				Call(jen.Id("f"), jen.Id("verb")),
 			jen.Line(),
 
-			// When formatting a non-nil value as a string, prefer a
-			// caller-provided AsString() method if the type implements one. The
-			// nil check guards against AsString() implementations that
-			// dereference the receiver; nil values fall through to String().
+			// When formatting as a string, prefer a caller-provided AsString()
+			// method if the type implements one.
 			jen.
 				If(
 					jen.Id("verb").Op("==").LitRune('s').
@@ -58,33 +59,40 @@ func generateFormat(code *jen.File, m *scope.Message) {
 				).
 				BlockFunc(func(c *jen.Group) {
 					c.
-						If(jen.Id("x").Op("!=").Nil()).
-						Block(
+						If(
 							jen.
-								If(
-									jen.
-										List(jen.Id("s"), jen.Id("ok")).
-										Op(":=").
-										Id("any").Call(jen.Id("x")).
-										Assert(
-											jen.Interface(
-												jen.Id("AsString").Params().Add(jen.String()),
-											),
-										).
-										Op(";").
-										Id("ok"),
+								List(jen.Id("s"), jen.Id("ok")).
+								Op(":=").
+								Id("any").Call(jen.Id("x")).
+								Assert(
+									jen.Interface(
+										jen.Id("AsString").Params().Add(jen.String()),
+									),
 								).
+								Op(";").
+								Id("ok"),
+						).
+						BlockFunc(func(c *jen.Group) {
+							c.
+								List(jen.Id("result"), jen.Id("ok")).
+								Op(":=").
+								Add(wrapWithPanicRecovery("AsString", jen.Id("s").Dot("AsString").Call()))
+							c.
+								If(jen.Id("ok")).
 								Block(
-									jen.
-										Qual("fmt", "Fprintf").
-										Call(
-											jen.Id("f"),
-											jen.Id("format"),
-											jen.Id("s").Dot("AsString").Call(),
-										),
-									jen.Return(),
-								),
-						)
+									jen.Qual("fmt", "Fprintf").Call(jen.Id("f"), jen.Id("format"), jen.Id("result")),
+								).
+								Else().
+								If(jen.Id("x").Op("==").Nil()).
+								Block(
+									jen.Qual("fmt", "Fprint").Call(jen.Id("f"), jen.Lit("<nil>")),
+								).
+								Else().
+								Block(
+									jen.Qual("fmt", "Fprint").Call(jen.Id("f"), jen.Id("result")),
+								)
+							c.Return()
+						})
 				}),
 			jen.Line(),
 
@@ -102,37 +110,48 @@ func generateFormat(code *jen.File, m *scope.Message) {
 				).
 				BlockFunc(func(c *jen.Group) {
 					c.
-						If(jen.Id("x").Op("!=").Nil()).
-						Block(
+						If(
 							jen.
-								If(
-									jen.
-										List(jen.Id("s"), jen.Id("ok")).
-										Op(":=").
-										Id("any").Call(jen.Id("x")).
-										Assert(
-											jen.Interface(
-												jen.Id("GoString").Params().Add(jen.String()),
-											),
-										).
-										Op(";").
-										Id("ok"),
+								List(jen.Id("s"), jen.Id("ok")).
+								Op(":=").
+								Id("any").Call(jen.Id("x")).
+								Assert(
+									jen.Interface(
+										jen.Id("GoString").Params().Add(jen.String()),
+									),
 								).
+								Op(";").
+								Id("ok"),
+						).
+						BlockFunc(func(c *jen.Group) {
+							c.
+								List(jen.Id("result"), jen.Id("ok")).
+								Op(":=").
+								Add(wrapWithPanicRecovery("GoString", jen.Id("s").Dot("GoString").Call()))
+							// GoString() results are printed unadorned (as with the
+							// %s verb), matching fmt.GoStringer's contract.
+							c.
+								If(jen.Id("ok")).
 								Block(
-									// GoString() results are printed unadorned (as
-									// with the %s verb), matching fmt.GoStringer's
-									// contract; the %#v format string is not reused
-									// here since it would re-quote the string.
 									jen.
 										Qual("fmt", "Fprintf").
 										Call(
 											jen.Id("f"),
 											jen.Qual("fmt", "FormatString").Call(jen.Id("f"), jen.LitRune('s')),
-											jen.Id("s").Dot("GoString").Call(),
+											jen.Id("result"),
 										),
-									jen.Return(),
-								),
-						)
+								).
+								Else().
+								If(jen.Id("x").Op("==").Nil()).
+								Block(
+									jen.Qual("fmt", "Fprint").Call(jen.Id("f"), jen.Lit("<nil>")),
+								).
+								Else().
+								Block(
+									jen.Qual("fmt", "Fprint").Call(jen.Id("f"), jen.Id("result")),
+								)
+							c.Return()
+						})
 				}).
 				Else().
 				BlockFunc(func(c *jen.Group) {
@@ -175,4 +194,46 @@ func generateFormat(code *jen.File, m *scope.Message) {
 					jen.Params(jen.Op("*").Id(m.GoTypeName)).Call(jen.Id("x")),
 				),
 		)
+}
+
+// wrapWithPanicRecovery returns an immediately-invoked function literal that
+// evaluates call and returns its result, recovering from a panic into a
+// "%!verb(PANIC=method method: value)" marker, matching how fmt formats a
+// panicking Stringer.
+func wrapWithPanicRecovery(method string, call jen.Code) jen.Code {
+	return jen.
+		Func().
+		Params().
+		Params(
+			jen.Id("result").String(),
+			jen.Id("ok").Bool(),
+		).
+		Block(
+			jen.
+				Defer().
+				Func().
+				Params().
+				Block(
+					jen.
+						If(
+							jen.Id("r").Op(":=").Recover().
+								Op(";").
+								Id("r").Op("!=").Nil(),
+						).
+						Block(
+							jen.
+								Id("result").
+								Op("=").
+								Qual("fmt", "Sprintf").
+								Call(
+									jen.Lit("%%!%c(PANIC="+method+" method: %v)"),
+									jen.Id("verb"),
+									jen.Id("r"),
+								),
+						),
+				).
+				Call(),
+			jen.Return(call, jen.True()),
+		).
+		Call()
 }

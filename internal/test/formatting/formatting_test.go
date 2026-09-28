@@ -2,8 +2,6 @@ package formatting_test
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 	"testing"
 
 	. "github.com/dogmatiq/primo/internal/test/formatting"
@@ -12,121 +10,188 @@ import (
 var (
 	_ fmt.Formatter = (*Stringable)(nil)
 	_ fmt.Formatter = (*Plain)(nil)
+	_ fmt.Formatter = (*Panicky)(nil)
+	_ fmt.Formatter = (*NilSafe)(nil)
 )
 
 func TestFormat(t *testing.T) {
-	t.Parallel()
+	cases := []struct {
+		name   string
+		value  any
+		format string
+		want   string
+	}{
+		{
+			"uses AsString() for %s",
+			&Stringable{Value: "hello"},
+			"%s",
+			"as-string(hello)",
+		},
+		{
+			"uses AsString() for %q",
+			&Stringable{Value: "hello"},
+			"%q",
+			`"as-string(hello)"`,
+		},
+		{
+			"uses String() for %v even though AsString() is implemented",
+			&Stringable{Value: "hello"},
+			"%v",
+			`value:"hello"`,
+		},
+		{
+			"uses GoString() for %#v",
+			&Stringable{Value: "hello"},
+			"%#v",
+			"go-string(hello)",
+		},
+		{
+			"recovers from AsString() panicking on a nil receiver for %s",
+			(*Stringable)(nil),
+			"%s",
+			"<nil>",
+		},
+		{
+			"recovers from AsString() panicking on a nil receiver for %q",
+			(*Stringable)(nil),
+			"%q",
+			"<nil>",
+		},
+		{
+			"recovers from GoString() panicking on a nil receiver for %#v",
+			(*Stringable)(nil),
+			"%#v",
+			"<nil>",
+		},
+		{
+			"calls a nil-tolerant AsString() for %s",
+			(*NilSafe)(nil),
+			"%s",
+			"as-string(nil)",
+		},
+		{
+			"calls a nil-tolerant AsString() for %q",
+			(*NilSafe)(nil),
+			"%q",
+			`"as-string(nil)"`,
+		},
+		{
+			"calls a nil-tolerant GoString() for %#v",
+			(*NilSafe)(nil),
+			"%#v",
+			"go-string(nil)",
+		},
+		{
+			"formats an AsString() panic like fmt formats a panicking Stringer for %s",
+			&Panicky{Value: "hello"},
+			"%s",
+			"%!s(PANIC=AsString method: boom)",
+		},
+		{
+			"formats an AsString() panic like fmt formats a panicking Stringer for %q",
+			&Panicky{Value: "hello"},
+			"%q",
+			"%!q(PANIC=AsString method: boom)",
+		},
+		{
+			"formats a GoString() panic like fmt formats a panicking GoStringer for %#v",
+			&Panicky{Value: "hello"},
+			"%#v",
+			"%!v(PANIC=GoString method: boom)",
+		},
+		{
+			"delegates to String() for %v when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%v",
+			`value:"hello"`,
+		},
+		{
+			"delegates to String() for %+v when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%+v",
+			`value:"hello"`,
+		},
+		{
+			"delegates to String() for %s when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%s",
+			`value:"hello"`,
+		},
+		{
+			"delegates to String() for %x when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%x",
+			"76616c75653a2268656c6c6f22",
+		},
+		{
+			"delegates to String() for %X when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%X",
+			"76616C75653A2268656C6C6F22",
+		},
+		{
+			"delegates to String() for %q when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%q",
+			`"value:\"hello\""`,
+		},
+		{
+			"delegates to String() for %#q when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%#q",
+			"`value:\"hello\"`",
+		},
+		{
+			"delegates to String() for %#x when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%#x",
+			"0x76616c75653a2268656c6c6f22",
+		},
+		{
+			"delegates to String() for %#X when AsString() is absent",
+			&Plain{Value: "hello"},
+			"%#X",
+			"0X76616C75653A2268656C6C6F22",
+		},
+		{
+			"prefers AsString() over String() for %#q",
+			&Stringable{Value: "hello"},
+			"%#q",
+			"`as-string(hello)`",
+		},
+		{
+			"prefers String() over AsString() for %#x",
+			&Stringable{Value: "hello"},
+			"%#x",
+			"0x76616c75653a2268656c6c6f22",
+		},
+		{
+			"prefers String() over AsString() for %#X",
+			&Stringable{Value: "hello"},
+			"%#X",
+			"0X76616C75653A2268656C6C6F22",
+		},
+		{
+			"falls back to default formatting for %d",
+			&Plain{Value: "hello"},
+			"%d",
+			"&{{{} [] [] 0} %!d(string=hello) [] 0}",
+		},
+		{
+			"preserves the type name for %#v",
+			&Plain{Value: "hello"},
+			"%#v",
+			`&formatting.Plain{state:impl.MessageState{NoUnkeyedLiterals:pragma.NoUnkeyedLiterals{}, DoNotCompare:pragma.DoNotCompare{}, DoNotCopy:pragma.DoNotCopy{}, atomicMessageInfo:(*impl.MessageInfo)(nil)}, Value:"hello", unknownFields:[]uint8(nil), sizeCache:0}`,
+		},
+	}
 
-	t.Run("uses AsString() for the %s and %q verbs", func(t *testing.T) {
-		x := &Stringable{Value: "hello"}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			t.Parallel()
 
-		if got, want := fmt.Sprintf("%s", x), x.AsString(); got != want {
-			t.Errorf("%%s: got %q, want %q", got, want)
-		}
-		if got, want := fmt.Sprintf("%q", x), strconv.Quote(x.AsString()); got != want {
-			t.Errorf("%%q: got %q, want %q", got, want)
-		}
-	})
-
-	t.Run("uses String() for other verbs even when AsString() is implemented", func(t *testing.T) {
-		x := &Stringable{Value: "hello"}
-
-		if got, want := fmt.Sprintf("%v", x), x.String(); got != want {
-			t.Errorf("%%v: got %q, want %q", got, want)
-		}
-	})
-
-	t.Run("does not call AsString() for a nil receiver", func(t *testing.T) {
-		x := (*Stringable)(nil)
-
-		for _, verb := range []string{"%s", "%q"} {
-			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
-				t.Errorf("%s: got %q, want %q", verb, got, want)
+			if got := fmt.Sprintf(c.format, c.value); got != c.want {
+				t.Errorf("got %q, want %q", got, c.want)
 			}
-		}
-	})
-
-	t.Run("uses GoString() for the %#v verb", func(t *testing.T) {
-		x := &Stringable{Value: "hello"}
-
-		if got, want := fmt.Sprintf("%#v", x), x.GoString(); got != want {
-			t.Errorf("%%#v: got %q, want %q", got, want)
-		}
-	})
-
-	t.Run("does not call GoString() for a nil receiver", func(t *testing.T) {
-		x := (*Stringable)(nil)
-
-		got := fmt.Sprintf("%#v", x)
-		want := "(*formatting.Stringable)(nil)"
-		if got != want {
-			t.Errorf("%%#v: got %q, want %q", got, want)
-		}
-	})
-
-	t.Run("delegates the Stringer verbs to String() when AsString() is absent", func(t *testing.T) {
-		x := &Plain{Value: "hello"}
-
-		for _, verb := range []string{"%v", "%+v", "%s", "%x", "%X", "%q"} {
-			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
-				t.Errorf("%s: got %q, want %q", verb, got, want)
-			}
-		}
-	})
-
-	t.Run("delegates the Stringer verbs to String() even when combined with the '#' flag", func(t *testing.T) {
-		x := &Plain{Value: "hello"}
-
-		// The '#' flag only selects Go-syntax mode for the %v verb; for every
-		// other Stringer verb it is passed through to fmt's formatting of the
-		// String() result, so it must not cause Format() to bypass String() in
-		// favor of the default (struct dump) behavior.
-		for _, verb := range []string{"%#s", "%#q", "%#x", "%#X"} {
-			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
-				t.Errorf("%s: got %q, want %q", verb, got, want)
-			}
-		}
-	})
-
-	t.Run("prefers AsString() over String() for %#s and %#q", func(t *testing.T) {
-		x := &Stringable{Value: "hello"}
-
-		// AsString() only overrides the %s and %q verbs, so the '#' flag must
-		// not cause %#x and %#X to also prefer it over String().
-		for _, verb := range []string{"%#s", "%#q"} {
-			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.AsString()); got != want {
-				t.Errorf("%s: got %q, want %q", verb, got, want)
-			}
-		}
-		for _, verb := range []string{"%#x", "%#X"} {
-			if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, x.String()); got != want {
-				t.Errorf("%s: got %q, want %q", verb, got, want)
-			}
-		}
-	})
-
-	t.Run("falls back to default formatting for the other verbs", func(t *testing.T) {
-		x := &Plain{Value: "hello"}
-
-		// A method-less type with the same structure produces the output that
-		// fmt would produce if Format() were absent.
-		type realType = Plain
-		type Plain realType
-
-		// The format string is held in a variable so that it is not analyzed by
-		// go vet, which rejects the %d verb applied to a struct.
-		verb := "%d"
-		if got, want := fmt.Sprintf(verb, x), fmt.Sprintf(verb, (*Plain)(x)); got != want {
-			t.Errorf("%s: got %q, want %q", verb, got, want)
-		}
-	})
-
-	t.Run("preserves the type name for the %#v verb", func(t *testing.T) {
-		x := &Plain{Value: "hello"}
-
-		got := fmt.Sprintf("%#v", x)
-		if !strings.Contains(got, "formatting.Plain{") || !strings.Contains(got, `Value:"hello"`) {
-			t.Errorf("%%#v: got %q, want it to contain the qualified type name and field", got)
-		}
-	})
+		})
+	}
 }

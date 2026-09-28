@@ -10,3 +10,12 @@ message Stringable { string value = 1; }
 // Plain has no AsString() method, exercising the transparency of the generated
 // Format() method.
 message Plain { string value = 1; }
+
+// Panicky has AsString() and GoString() methods that always panic, exercising
+// the panic-recovery behavior of the generated Format() method.
+message Panicky { string value = 1; }
+
+// NilSafe has AsString() and GoString() methods that handle a nil receiver
+// themselves, exercising the generated Format() method's ability to call
+// through to a nil-tolerant implementation instead of recovering from a panic.
+message NilSafe { string value = 1; }
