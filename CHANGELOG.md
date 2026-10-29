@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 [bc]: https://github.com/dogmatiq/.github/blob/main/VERSIONING.md#changelogs
 
-## [Unreleased]
+## [0.4.4] - 2026-10-29
 
 ### Fixed
 
@@ -193,6 +193,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 [0.4.1]: https://github.com/dogmatiq/primo/releases/tag/v0.4.1
 [0.4.2]: https://github.com/dogmatiq/primo/releases/tag/v0.4.2
 [0.4.3]: https://github.com/dogmatiq/primo/releases/tag/v0.4.3
+[0.4.4]: https://github.com/dogmatiq/primo/releases/tag/v0.4.4
 
 <!-- version template
 ## [0.0.1] - YYYY-MM-DD
