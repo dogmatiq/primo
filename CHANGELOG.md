@@ -11,6 +11,18 @@ The format is based on [Keep a Changelog], and this project adheres to
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
 [bc]: https://github.com/dogmatiq/.github/blob/main/VERSIONING.md#changelogs
 
+## [Unreleased]
+
+### Fixed
+
+- Generated code now uses the same package name as `protoc-gen-go` when the
+  package name is inferred from a `go_package` import path that is not a valid Go
+  identifier, such as one containing a hyphen. For example,
+  `example.com/my-module` produces `package my_module`.
+- An invalid package name given explicitly in the `go_package` option, such as
+  `example.com/foo;my-pkg`, now produces a clear error instead of a syntax error
+  from formatting the generated code.
+
 ## [0.4.3] - 2026-09-28
 
 ### Changed
