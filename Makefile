@@ -10,9 +10,8 @@ GO_TEST_REQ += $(foreach f,$(PROTO_FILES:.proto=_primo.pb.go),$(if $(findstring 
 -include .makefiles/pkg/go/v1/Makefile
 -include .makefiles/pkg/vscode/v1/Makefile
 
-%_primo.pb.go: %.proto $(PROTOC_COMMAND) artifacts/protobuf/args/go $(GO_DEBUG_DIR)/protoc-gen-go-primo
+%_primo.pb.go: %.proto $(_PROTO_PROTOC_REQ) artifacts/protobuf/args/go $(GO_DEBUG_DIR)/protoc-gen-go-primo
 	PROTO_PLUGIN_COMMAND="go tool google.golang.org/protobuf/cmd/protoc-gen-go" $(PROTOC_COMMAND) \
-		--proto_path="$(dir $(PROTOC_COMMAND))../include" \
 		--go-primo_opt=module=$$(go list -m) \
 		--go-primo_out=. \
 		$$(cat artifacts/protobuf/args/go) \
