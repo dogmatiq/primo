@@ -11,11 +11,13 @@ GO_TEST_REQ += $(foreach f,$(PROTO_FILES:.proto=_primo.pb.go),$(if $(findstring 
 -include .makefiles/pkg/vscode/v1/Makefile
 
 %_primo.pb.go: %.proto $(PROTOC_COMMAND) artifacts/protobuf/args/go $(GO_DEBUG_DIR)/protoc-gen-go-primo
-	PATH="$(GO_DEBUG_DIR):$(MF_PROJECT_ROOT)/artifacts/protobuf/bin:$$PATH" $(PROTOC_COMMAND) \
+	PROTO_PLUGIN_COMMAND="go tool google.golang.org/protobuf/cmd/protoc-gen-go" $(PROTOC_COMMAND) \
 		--proto_path="$(dir $(PROTOC_COMMAND))../include" \
 		--go-primo_opt=module=$$(go list -m) \
 		--go-primo_out=. \
 		$$(cat artifacts/protobuf/args/go) \
+		--plugin protoc-gen-go=$(MF_ROOT)/pkg/protobuf/v2/bin/exec-protoc-plugin \
+		--plugin protoc-gen-go-primo=$(GO_DEBUG_DIR)/protoc-gen-go-primo \
 		$(MF_PROJECT_ROOT)/$(@D)/*.proto
 
 .makefiles/%:
