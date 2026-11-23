@@ -1,13 +1,16 @@
 <div align="center">
 
-# Primo
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://dogmatiq.io/res/img/dynamic/repo/primo/banner/dark.svg">
+  <img alt="Dogmatiq primo" src="https://dogmatiq.io/res/img/dynamic/repo/primo/banner/light.svg" height="44">
+</picture>
 
 Opinionated Protocol Buffers enhancements for Go.
 
-[![Documentation](https://img.shields.io/badge/go.dev-documentation-007d9c?&style=for-the-badge)](https://pkg.go.dev/github.com/dogmatiq/primo)
-[![Latest Version](https://img.shields.io/github/tag/dogmatiq/primo.svg?&style=for-the-badge&label=semver)](https://github.com/dogmatiq/primo/releases)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/dogmatiq/primo/ci.yml?style=for-the-badge&branch=main)](https://github.com/dogmatiq/primo/actions/workflows/ci.yml)
-[![Code Coverage](https://img.shields.io/codecov/c/github/dogmatiq/primo/main.svg?style=for-the-badge)](https://codecov.io/github/dogmatiq/primo)
+[![API reference](https://dogmatiq.io/res/img/dynamic/repo/primo/badge/docs.svg)](https://pkg.go.dev/github.com/dogmatiq/primo)
+[![Latest version](https://dogmatiq.io/res/img/dynamic/repo/primo/badge/semver.svg)](https://github.com/dogmatiq/primo/releases)
+[![Build status](https://dogmatiq.io/res/img/dynamic/repo/primo/badge/build.svg)](https://github.com/dogmatiq/primo/actions/workflows/ci.yml)
+[![Code coverage](https://dogmatiq.io/res/img/dynamic/repo/primo/badge/coverage.svg)](https://codecov.io/github/dogmatiq/primo)
 
 </div>
 
